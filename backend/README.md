@@ -16,3 +16,7 @@ use it.
 Or, alternatively, use MongoDB Cloud Atlas. See this tutorial for this option:
 https://www.mongodb.com/languages/mern-stack-tutorial (you can adjust the
 credentials in the `config.env` files then, accordingly).
+
+### Mongoose
+Mongoose is used for Model "Management";  
+getting started: https://mongoosejs.com/
