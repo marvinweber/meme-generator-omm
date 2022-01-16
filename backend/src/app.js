@@ -2,17 +2,33 @@ import createError from 'http-errors';
 import express from 'express';
 import path, { dirname } from 'path';
 import cookieParser from 'cookie-parser';
-import logger from 'morgan'
+import logger from 'morgan';
 import indexRouter from './routes/index.js';
-import usersRouter from './routes/users.js'
+import usersRouter from './routes/users.js';
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+
+const ROOT_DIR = dirname(fileURLToPath(import.meta.url));
+
+// load config into process.env
+dotenv.config({
+  path: path.normalize(path.join(ROOT_DIR, '..', 'config.env')),
+});
 
 const app = express();
-const ROOT_DIR = dirname(fileURLToPath(import.meta.url));
 
 // view engine setup
 app.set('views', path.join(ROOT_DIR, 'views'));
 app.set('view engine', 'pug');
+
+// database (mongodb) connection
+const mongoDbUri = process.env.MONGODB_URI;
+mongoose.connect(mongoDbUri);
+app.use((req, _, next) => {
+  req.db = mongoose.connection;
+  next();
+});
 
 app.use(logger('dev'));
 app.use(express.json());
