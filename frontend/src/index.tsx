@@ -1,15 +1,30 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import './tailwind.output.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import "./tailwind.output.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import MemeEditor from "./routes/memeEditor";
+import Profile from "./routes/profile";
+import Overview from "./routes/overview";
+import SingleMeme from "./routes/singleMeme";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter >
+      <Routes>
+        <Route path="/" element={<App />}>
+          <Route index element={<Overview />} />
+          <Route path="memes" element={<Overview />} />
+          <Route path="memes/:memeId" element={<SingleMeme />} />
+          <Route path="meme-editor" element={<MemeEditor />} />
+          <Route path="profile" element={<Profile />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function
