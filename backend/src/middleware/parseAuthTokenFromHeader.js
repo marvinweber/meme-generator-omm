@@ -16,8 +16,8 @@ const GOOGLE_APP_CLIENT_ID = process.env.GOOGLE_APP_CLIENT_ID;
  * @param {*} next
  */
 export default async function parseAuthTokenFromHeader(req, res, next) {
-  const authType = req.get('AUTHENTICATION-TYPE');
-  const authToken = req.get('AUTHENTICATION-TOKEN');
+  const authType = req.get('Authentication-Type');
+  const authToken = req.get('Authentication-Token');
   req.authenticated = false;
 
   // no authentication details provided with request: skip check

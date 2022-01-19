@@ -28,3 +28,9 @@ https://github.com/remix-run/react-router/blob/main/docs/getting-started/tutoria
 ### TailwindCSS
 For easy CSS styling.  
 Docs: https://tailwindcss.com/docs/installation
+
+## Docs
+### HTTP Request Frontend -> Backend
+Use the `apiClient`, exported from the `index.tsx` file. It has already set the
+correct `baseUrl` and authentication headers will also be set as default values
+once the user logged in.

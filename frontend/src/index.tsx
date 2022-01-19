@@ -9,6 +9,7 @@ import MemeEditor from "./routes/memeEditor";
 import Profile from "./routes/profile";
 import Overview from "./routes/overview";
 import SingleMeme from "./routes/singleMeme";
+import axios from "axios";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -31,3 +32,8 @@ ReactDOM.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+
+export const API_URL = process.env.REACT_APP_API_URL;
+export const apiClient = axios.create({
+  baseURL: API_URL,
+});
