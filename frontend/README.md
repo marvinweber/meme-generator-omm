@@ -30,6 +30,11 @@ For easy CSS styling.
 Docs: https://tailwindcss.com/docs/installation
 
 ## Docs
+### State Management
+[Redux](https://redux.js.org/tutorials/typescript-quick-start) (together
+with [React Redux](https://react-redux.js.org/introduction/getting-started)) is
+used for global state management.
+
 ### HTTP Request Frontend -> Backend
 Use the `apiClient`, exported from the `index.tsx` file. It has already set the
 correct `baseUrl` and authentication headers will also be set as default values

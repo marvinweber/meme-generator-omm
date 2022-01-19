@@ -10,20 +10,24 @@ import Profile from "./routes/profile";
 import Overview from "./routes/overview";
 import SingleMeme from "./routes/singleMeme";
 import axios from "axios";
+import store from "./store/index";
+import { Provider } from "react-redux";
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter >
-      <Routes>
-        <Route path="/" element={<App />}>
-          <Route index element={<Overview />} />
-          <Route path="memes" element={<Overview />} />
-          <Route path="memes/:memeId" element={<SingleMeme />} />
-          <Route path="meme-editor" element={<MemeEditor />} />
-          <Route path="profile" element={<Profile />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter >
+        <Routes>
+          <Route path="/" element={<App />}>
+            <Route index element={<Overview />} />
+            <Route path="memes" element={<Overview />} />
+            <Route path="memes/:memeId" element={<SingleMeme />} />
+            <Route path="meme-editor" element={<MemeEditor />} />
+            <Route path="profile" element={<Profile />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>,
   document.getElementById("root")
 );

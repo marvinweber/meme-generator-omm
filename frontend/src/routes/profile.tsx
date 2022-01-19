@@ -1,11 +1,21 @@
 import GoogleAuthButton from "../components/login/GoogleAuthButton";
+import UserProfile from "../components/user/UserProfile";
+import { useAppSelector } from "../hooks";
 
 export default function Profile() {
+  const loggedIn = useAppSelector((state) => state.user.loggedIn);
+
   return (
     <>
-      <h1 className="text-2xl">User Profile</h1>
-      <p>here goes the user profile...</p>
-      <GoogleAuthButton />
+      {loggedIn ? (
+        <div>
+          <UserProfile />
+        </div>
+      ) : (
+        <div>
+          <GoogleAuthButton />
+        </div>
+      )}
     </>
   );
 }
