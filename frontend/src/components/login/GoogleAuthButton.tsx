@@ -1,3 +1,4 @@
+import React from "react";
 import {
   GoogleLogin,
   GoogleLoginResponse,
@@ -9,7 +10,7 @@ import { login, logout } from "../../store/slices/userSlice";
 
 const CLIENT_ID: string = process.env.REACT_APP_GOOGLE_OAUTH_CLIENT_ID || "";
 
-export default function GoogleAuthButton() {
+const GoogleAuthButton: React.FC<{ text?: string }> = ({ text }) => {
   const loggedIn = useAppSelector((state) => state.user.loggedIn);
   const dispatch = useAppDispatch();
 
@@ -62,7 +63,7 @@ export default function GoogleAuthButton() {
       ) : (
         <GoogleLogin
           clientId={CLIENT_ID}
-          buttonText="Sign In with Google"
+          buttonText={text}
           //@ts-ignore
           onSuccess={responseGoogleSuccess}
           onFailure={responseGoogleError}
@@ -72,4 +73,10 @@ export default function GoogleAuthButton() {
       )}
     </>
   );
-}
+};
+
+GoogleAuthButton.defaultProps = {
+  text: "Sign in with Google",
+};
+
+export default GoogleAuthButton;
