@@ -2,6 +2,7 @@ import createError from 'http-errors';
 import express from 'express';
 import path, { dirname } from 'path';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import logger from 'morgan';
 import authRouter from './routes/auth.js';
 import indexRouter from './routes/index.js';
@@ -33,6 +34,7 @@ app.use((req, _, next) => {
 
 app.use(parseAuthTokenFromHeader);
 
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
