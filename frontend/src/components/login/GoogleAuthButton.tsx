@@ -47,8 +47,8 @@ export default function GoogleAuthButton() {
   const logoutHandler = () => {
     dispatch(logout());
 
-    apiClient.defaults.headers.common["AUTHENTICATION-TYPE"] = false;
-    apiClient.defaults.headers.common["AUTHENTICATION-TOKEN"] = false;
+    apiClient.defaults.headers.common["Authentication-Type"] = false;
+    apiClient.defaults.headers.common["Authentication-Token"] = false;
   };
 
   return (
