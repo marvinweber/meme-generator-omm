@@ -8,6 +8,9 @@ npm install
 
 # serve
 npm start
+
+# serve with hot reloading
+npm run watch:dev
 ```
 
 ## MongoDB Connection

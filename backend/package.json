@@ -3,8 +3,20 @@
   "version": "0.0.1",
   "private": false,
   "type": "module",
+  "nodemonConfig": {
+    "exec": "npm start",
+    "watch": [
+      "src/*"
+    ],
+    "ignore": [
+      "**/__tests__/**",
+      "*.test.js",
+      "*.spec.js"
+    ]
+  },
   "scripts": {
-    "start": "node ./bin/www.js"
+    "start": "node ./bin/www.js",
+    "watch:dev": "nodemon"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -17,5 +29,8 @@
     "mongoose": "^6.1.6",
     "morgan": "~1.9.1",
     "pug": "2.0.0-beta11"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }
