@@ -3,11 +3,12 @@ import express from 'express';
 import path, { dirname } from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
+import authRouter from './routes/auth.js';
 import indexRouter from './routes/index.js';
-import usersRouter from './routes/users.js';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import parseAuthTokenFromHeader from './middleware/parseAuthTokenFromHeader.js';
 
 const ROOT_DIR = dirname(fileURLToPath(import.meta.url));
 
@@ -30,14 +31,19 @@ app.use((req, _, next) => {
   next();
 });
 
+app.use(parseAuthTokenFromHeader);
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(ROOT_DIR, 'public')));
 
+//
+// Routes
+//
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/auth', authRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
