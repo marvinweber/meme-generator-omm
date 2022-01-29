@@ -1,17 +1,23 @@
 import createError from 'http-errors';
 import express from 'express';
+import fileUpload from 'express-fileupload';
 import path, { dirname } from 'path';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import logger from 'morgan';
-import authRouter from './routes/auth.js';
-import indexRouter from './routes/index.js';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import parseAuthTokenFromHeader from './middleware/parseAuthTokenFromHeader.js';
 
-const ROOT_DIR = dirname(fileURLToPath(import.meta.url));
+//
+// Route Imports
+//
+import authRouter from './routes/auth.js';
+import indexRouter from './routes/index.js';
+import templateRouter from './routes/template.js';
+
+export const ROOT_DIR = dirname(fileURLToPath(import.meta.url));
 
 // load config into process.env
 dotenv.config({
@@ -37,6 +43,12 @@ app.use(parseAuthTokenFromHeader);
 app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
+// enable file uploads
+app.use(
+  fileUpload({
+    createParentPath: true,
+  })
+);
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(ROOT_DIR, 'public')));
@@ -46,6 +58,7 @@ app.use(express.static(path.join(ROOT_DIR, 'public')));
 //
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
+app.use('/templates', templateRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

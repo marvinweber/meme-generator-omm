@@ -1,5 +1,5 @@
 import { useAppSelector } from "../hooks";
-import MemeEditorComponent from "../components/memes/Editor";
+import MemeEditorPage from "../components/memes/EditorPage";
 
 export default function MemeEditor() {
   const user = useAppSelector((state) => state.user);
@@ -7,7 +7,7 @@ export default function MemeEditor() {
   return (
     <>
       {user.loggedIn ? (
-        <MemeEditorComponent />
+        <MemeEditorPage />
       ) : (
         <div>Please login to use the Meme Editor!</div>
       )}
