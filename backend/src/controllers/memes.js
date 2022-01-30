@@ -1,37 +1,79 @@
 import mongoose from 'mongoose';
-import MemeSchema from '../models/meme.js'
+import { ROOT_DIR } from '../app.js';
+import MemeSchema from '../models/meme.js';
+import path from 'path';
 
 export const getMemes = async (req, res) => {
-    try {
-        const meme = await MemeSchema.find();
+  try {
+    const meme = await MemeSchema.find();
 
-        res.status(200).json(meme);
-    } catch (error) {
-        res.status(404).json({ message: error.message });
+    res.status(200).json(meme);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+export const createMemeByConfig = async (req, res) => {
+  res.status(500).json('not yet supported!');
+};
+
+export const createMemeByFileUpload = async (req, res) => {
+  if (!req.files?.meme) {
+    console.log('fial');
+    return res.json({ success: false });
+  }
+
+  const tags =
+    req.body.tags && req.body.tags.length > 0 ? JSON.parse(req.body.tags) : [];
+  const captions =
+    req.body.captions && req.body.captions.length > 0
+      ? JSON.parse(req.body.captions)
+      : [];
+
+  const md5 = req.files.meme.md5;
+  const fileName = `${md5}.jpeg`;
+  const memeTitle = req.body.name || 'No Title';
+
+  const now = new Date();
+  const filePath = path.join(
+    'uploads/memes',
+    `${now.getFullYear()}/${now.getMonth() + 1}`,
+    fileName
+  );
+  const uploadPath = path.join(ROOT_DIR, 'public', filePath);
+
+  req.files.meme.mv(uploadPath, async (err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ success: false });
     }
-}
 
-export const createMeme = async (req, res) => {
-    const meme = req.body;
-    const newMeme = new MemeSchema(meme);
+    const meme = await new MemeSchema({
+      owner: req.user._id,
+      title: memeTitle,
+      createdAt: now,
+      path: filePath,
+      tags,
+      captions,
+    })
+      .save()
+      .then((t) => t.populate('owner', 'name'));
 
-    try {
-        await newMeme.save();
-
-        res.status(201).json(newMeme);
-    } catch (error) {
-        res.status(404).json({ message: error.message });
-    }
-}
+    res.json({
+      success: true,
+      memes: [meme],
+    });
+  });
+};
 
 export const updateMeme = async (req, res) => {
-    // TODO
-}
+  // TODO
+};
 
 export const deleteMeme = async (req, res) => {
-    // TODO
-}
+  // TODO
+};
 
 export const likeMeme = async (req, res) => {
-    // TODO
-}
+  // TODO
+};

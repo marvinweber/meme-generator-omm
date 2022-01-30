@@ -1,9 +1,11 @@
 import mongoose from 'mongoose';
 
 const memeSchema = new mongoose.Schema({
-  id: String,
-  ownerId: String,
-  owner: String,
+  owner: {
+    ref: 'user',
+    type: mongoose.Schema.Types.ObjectId,
+  },
+  title: String,
   viewCount: {
     type: Number,
     default: 0
@@ -16,10 +18,10 @@ const memeSchema = new mongoose.Schema({
     type: Date,
     default: new Date()
   },
-  imageUrl: String,
+  path: String,
   tags: [String],
   captions: [String],
 });
 
-const MemeSchema = mongoose.model('MemeSchema', memeSchema);
+const MemeSchema = mongoose.model('meme', memeSchema);
 export default MemeSchema;
