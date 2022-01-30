@@ -6,7 +6,7 @@ function App() {
   const loggedIn = useAppSelector((state) => state.user.loggedIn);
 
   return (
-    <div className="App w-full md:w-10/12 lg:w-8/12 m-auto p-1" id="main">
+    <div className="App w-full lg:w-11/12 xl:w-9/12 m-auto p-1" id="main">
       <div className="flex justify-between items-center flex-col sm:flex-row">
         <h1 className="text-3xl">Meme Generator</h1>
         <div className="flex justify-between items-center text-center h-12">
