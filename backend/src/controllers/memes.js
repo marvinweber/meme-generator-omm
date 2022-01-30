@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import { ROOT_DIR } from '../app.js';
 import MemeSchema from '../models/meme.js';
 import path from 'path';
@@ -7,7 +8,6 @@ export const getMemes = async (req, res) => {
 
   try {
     const memes = await MemeSchema.find()
-      .select('-path')
       .sort({ createdAt: 'desc' })
       .populate('owner', 'name');
 
@@ -16,7 +16,7 @@ export const getMemes = async (req, res) => {
       memes,
     });
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
