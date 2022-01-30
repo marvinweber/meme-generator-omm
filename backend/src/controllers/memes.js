@@ -1,13 +1,20 @@
-import mongoose from 'mongoose';
 import { ROOT_DIR } from '../app.js';
 import MemeSchema from '../models/meme.js';
 import path from 'path';
 
 export const getMemes = async (req, res) => {
-  try {
-    const meme = await MemeSchema.find();
+  // TODO: pagination, filters, sorting, etc.
 
-    res.status(200).json(meme);
+  try {
+    const memes = await MemeSchema.find()
+      .select('-path')
+      .sort({ createdAt: 'desc' })
+      .populate('owner', 'name');
+
+    res.status(200).json({
+      success: true,
+      memes,
+    });
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
@@ -19,7 +26,6 @@ export const createMemeByConfig = async (req, res) => {
 
 export const createMemeByFileUpload = async (req, res) => {
   if (!req.files?.meme) {
-    console.log('fial');
     return res.json({ success: false });
   }
 
