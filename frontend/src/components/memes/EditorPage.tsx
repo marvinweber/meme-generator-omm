@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Expandable from "../util/Expandable";
+import MemeEditor from "./editor/Editor";
 import MemeTemplateSelection from "./templates/TemplateSelection";
 
 export default function MemeEditorPage() {
@@ -16,8 +17,12 @@ export default function MemeEditorPage() {
           <MemeTemplateSelection onNewTemplateUrl={setTemplateImageUrl} />
         }
       />
-      {/* TODO: Add Meme Editor */}
-      <img src={templateImageUrl} />
+      <hr className="my-2" />
+      {templateImageUrl ? <MemeEditor templateUrl={templateImageUrl} /> : (
+        <div>
+          Select a Template to start creating your Meme!
+        </div>
+      )}
     </>
   );
 }

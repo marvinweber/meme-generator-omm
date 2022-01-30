@@ -15,6 +15,7 @@ import parseAuthTokenFromHeader from './middleware/parseAuthTokenFromHeader.js';
 //
 import authRouter from './routes/auth.js';
 import indexRouter from './routes/index.js';
+import memeRouter from './routes/memes.js';
 import templateRouter from './routes/template.js';
 
 export const ROOT_DIR = dirname(fileURLToPath(import.meta.url));
@@ -58,6 +59,7 @@ app.use(express.static(path.join(ROOT_DIR, 'public')));
 //
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
+app.use('/memes', memeRouter);
 app.use('/templates', templateRouter);
 
 // catch 404 and forward to error handler
