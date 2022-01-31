@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 import { ROOT_DIR } from '../app.js';
 import MemeSchema from '../models/meme.js';
 import path from 'path';
@@ -17,6 +17,26 @@ export const getMemes = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const getMemeById = async (req, res) => {
+  try {
+    const memeId = req.params.id;
+    // either increment view count by one or zero (no increment)
+    const viewIncrement = req.query.countView ? 1 : 0;
+
+    // fetch and update meme
+    const meme = await MemeSchema.findByIdAndUpdate(
+      memeId,
+      { $inc: { viewCount: viewIncrement } },
+      { returnOriginal: false }
+    ).populate('owner', 'name');
+
+    res.json({ success: true, meme });
+  } catch (e) {
+    console.log(e)
+    res.status(404).json({ success: false });
   }
 };
 
