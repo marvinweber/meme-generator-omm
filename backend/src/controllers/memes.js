@@ -24,19 +24,134 @@ export const getMemeById = async (req, res) => {
   try {
     const memeId = req.params.id;
     // either increment view count by one or zero (no increment)
-    const viewIncrement = req.query.countView ? 1 : 0;
+    const viewIncrement = req.query?.countView == 'true' ? 1 : 0;
+    const update = {
+      $inc: { viewCount: viewIncrement },
+    };
+    if (viewIncrement === 1) {
+      update['$push'] = { views: { viewer: req.user?._id ?? null } };
+    }
+
+    // fetch and update meme
+    const meme = await MemeSchema.findByIdAndUpdate(memeId, update, {
+      returnOriginal: false,
+    })
+      .select('-views')
+      .populate('owner', 'name profilePicUrl')
+      .populate('comments.author', 'name profilePicUrl')
+      .populate('likes.liker', 'name profilePicUrl');
+
+    if (!meme) {
+      return res.status(404).json({ success: false });
+    }
+
+    res.json({ success: true, meme });
+  } catch (e) {
+    res.status(404).json({ success: false });
+  }
+};
+
+export const postCommentOnMeme = async (req, res) => {
+  try {
+    const memeId = req.params.id;
+    const comment = { author: req.user._id, comment: req.body.comment };
 
     // fetch and update meme
     const meme = await MemeSchema.findByIdAndUpdate(
       memeId,
-      { $inc: { viewCount: viewIncrement } },
-      { returnOriginal: false }
-    ).populate('owner', 'name');
+      {
+        $inc: { commentCount: 1 },
+        $push: { comments: comment },
+      },
+      {
+        returnOriginal: false,
+      }
+    )
+      .select('-views')
+      .populate('owner', 'name profilePicUrl')
+      .populate('comments.author', 'name profilePicUrl')
+      .populate('likes.liker', 'name profilePicUrl');
+
+    if (!meme) {
+      return res.status(404).json({ success: false });
+    }
 
     res.json({ success: true, meme });
   } catch (e) {
-    console.log(e)
-    res.status(404).json({ success: false });
+    res.status(500).json({ success: false });
+  }
+};
+
+export const likeMeme = async (req, res) => {
+  try {
+    const memeId = req.params.id;
+
+    let meme = await MemeSchema.findOne({
+      _id: memeId,
+      'likes.liker': req.user._id,
+    })
+      .select('-views')
+      .populate('owner', 'name profilePicUrl')
+      .populate('comments.author', 'name profilePicUrl')
+      .populate('likes.liker', 'name profilePicUrl');
+
+    // user has already liked that meme
+    if (meme) {
+      return res.json({ success: true, meme });
+    }
+
+    meme = await MemeSchema.findByIdAndUpdate(
+      memeId,
+      {
+        $inc: { likeCount: 1 },
+        $push: { likes: { liker: req.user._id } },
+      },
+      {
+        returnOriginal: false,
+      }
+    )
+      .select('-views')
+      .populate('owner', 'name profilePicUrl')
+      .populate('comments.author', 'name profilePicUrl')
+      .populate('likes.liker', 'name profilePicUrl');
+
+    // meme not found
+    if (!meme) {
+      return res.status(404).json({ success: false });
+    }
+
+    return res.json({ success: true, meme });
+  } catch (e) {
+    res.status(500).json({ success: false });
+  }
+};
+
+export const unlikeMeme = async (req, res) => {
+  try {
+    const memeId = req.params.id;
+    const meme = await MemeSchema.findByIdAndUpdate(
+      memeId,
+      {
+        $inc: { likeCount: -1 },
+        $pull: { likes: { liker: req.user._id } },
+      },
+      {
+        returnOriginal: false,
+      }
+    )
+      .select('-views')
+      .populate('owner', 'name profilePicUrl')
+      .populate('comments.author', 'name profilePicUrl')
+      .populate('likes.liker', 'name profilePicUrl');
+
+    // meme not found
+    if (!meme) {
+      return res.status(404).json({ success: false });
+    }
+
+    return res.json({ success: true, meme });
+  } catch (e) {
+    res.status(500).json({ success: false });
   }
 };
 
@@ -94,14 +209,6 @@ export const createMemeByFileUpload = async (req, res) => {
   });
 };
 
-export const updateMeme = async (req, res) => {
-  // TODO
-};
-
 export const deleteMeme = async (req, res) => {
-  // TODO
-};
-
-export const likeMeme = async (req, res) => {
   // TODO
 };
