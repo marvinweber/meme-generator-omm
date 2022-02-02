@@ -7,6 +7,7 @@ const UserSchema = new mongoose.Schema({
   password: String,
   oauth: String,
   registeredAt: Date,
+  profilePicUrl: String,
 });
 
 export default mongoose.model('user', UserSchema);

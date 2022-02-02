@@ -1,5 +1,6 @@
 import { request, response } from 'express';
 import { OAuth2Client } from 'google-auth-library';
+import jwt_decode from 'jwt-decode';
 import User from '../models/user.js';
 
 const GOOGLE_APP_CLIENT_ID = process.env.GOOGLE_APP_CLIENT_ID;
@@ -16,23 +17,20 @@ const GOOGLE_APP_CLIENT_ID = process.env.GOOGLE_APP_CLIENT_ID;
  * @param {*} next
  */
 export default async function parseAuthTokenFromHeader(req, res, next) {
-  const authType = req.get('Authentication-Type');
-  const authToken = req.get('Authentication-Token');
   req.authenticated = false;
 
-  // no authentication details provided with request: skip check
-  if (!authType || !authToken) {
-    next();
-    return;
+  const authorizationHeader = req.headers.authorization;
+  if (!authorizationHeader) {
+    return next();
   }
+  const [authType, authData] = authorizationHeader.split(' ');
 
   let authenticated, user;
-  switch (authType.toLowerCase()) {
-    case 'google_oauth':
-      [authenticated, user] = await verifyGoogleAuthToken(authToken);
-      break;
+  switch (authType) {
+    case 'Bearer':
+      [authenticated, user] = await verifyBearerToken(authData);
     default:
-      // no other login types supported, currently
+      // no other login types (than Bearer Token / JWT) supported yet
       break;
   }
 
@@ -43,6 +41,31 @@ export default async function parseAuthTokenFromHeader(req, res, next) {
 
   next();
   return;
+}
+
+/**
+ * Verify the given JWT / Bearer Token
+ *
+ * @param {string} token The JWT token.
+ * @returns [authenticated, user]: flag to indicate whether authentication was
+ *          successfull and the actual user object (in case of successfull
+ *          authentication).
+ */
+async function verifyBearerToken(token) {
+  if (!token) {
+    return [false, null];
+  }
+
+  const decodedToken = jwt_decode(token);
+  const tokenIssuer = decodedToken['iss'] || null;
+
+  switch (tokenIssuer) {
+    case 'accounts.google.com':
+      return await verifyGoogleAuthToken(token);
+    default:
+      // no other login types supported, currently
+      return [false, null];
+  }
 }
 
 async function verifyGoogleAuthToken(token) {
@@ -67,6 +90,7 @@ async function verifyGoogleAuthToken(token) {
         name: payload['name'],
         oauth: 'google',
         registeredAt: Date.now(),
+        profilePicUrl: payload['picture'],
       });
       await user.save().then();
     }

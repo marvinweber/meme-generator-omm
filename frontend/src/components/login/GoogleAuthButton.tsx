@@ -34,8 +34,7 @@ const GoogleAuthButton: React.FC<{ text?: string }> = ({ text }) => {
     );
 
     // set axios default values and make login request to backend
-    apiClient.defaults.headers.common["Authentication-Type"] = "google_oauth";
-    apiClient.defaults.headers.common["Authentication-Token"] = idToken;
+    apiClient.defaults.headers.common["Authorization"] = `Bearer ${idToken}`;
     apiClient.get("/auth/oauth/login");
   };
 
