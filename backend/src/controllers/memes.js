@@ -51,6 +51,51 @@ export const getMemeById = async (req, res) => {
   }
 };
 
+export const getPreviousMemeForId = async (req, res) => {
+  const memeId = req.params.id;
+  const meme = await MemeSchema.findById(memeId);
+  if (!meme) {
+    return res.status(404).json({ success: false });
+  }
+
+  const previousMeme = await MemeSchema.find({
+    createdAt: { $lt: meme.createdAt },
+  })
+    .sort('-createdAt')
+    .limit(1)
+    .select('-views')
+    .populate('owner', 'name profilePicUrl')
+    .populate('comments.author', 'name profilePicUrl')
+    .populate('likes.liker', 'name profilePicUrl');
+  return res.json({ success: true, meme: previousMeme });
+};
+
+export const getNextMemeForId = async (req, res) => {
+  const memeId = req.params.id;
+  const meme = await MemeSchema.findById(memeId);
+  if (!meme) {
+    return res.status(404).json({ success: false });
+  }
+
+  const nextMeme = await MemeSchema.find({
+    createdAt: { $gt: meme.createdAt },
+  })
+    .sort('+createdAt')
+    .limit(1)
+    .select('-views')
+    .populate('owner', 'name profilePicUrl')
+    .populate('comments.author', 'name profilePicUrl')
+    .populate('likes.liker', 'name profilePicUrl');
+  return res.json({ success: true, meme: nextMeme });
+};
+
+export const getRandomMeme = async (req, res) => {
+  const memeCount = await MemeSchema.countDocuments();
+  const randomIndex = Math.floor(Math.random() * memeCount);
+  const meme = await MemeSchema.findOne().skip(randomIndex);
+  return res.json({ success: true, meme });
+};
+
 export const postCommentOnMeme = async (req, res) => {
   try {
     const memeId = req.params.id;

@@ -68,11 +68,13 @@ const meme = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
   },
 });
+
 meme.virtual('url').get(function () {
   return `${
     process.env.PUBLIC_URL
   }/${this.path.split(path.sep).join(path.posix.sep)}`;
 });
+
 meme.set('toJSON', { getters: true, virtuals: true });
 
 const MemeSchema = mongoose.model('meme', meme);
