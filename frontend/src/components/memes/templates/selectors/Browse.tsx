@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { apiClient } from "../../../..";
 
 const MemeTemplateSelectorBrowse: React.FC<{
-  onNewTemplateUrl: (url: string) => void;
-}> = ({ onNewTemplateUrl }) => {
+  onNewTemplate: (url: string, id?: string) => void;
+}> = ({ onNewTemplate }) => {
   const [templates, setTemplates] = useState<any[]>([]);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ const MemeTemplateSelectorBrowse: React.FC<{
           key={template._id}
           style={{ backgroundImage: `url(${template.url})` }}
           className="h-48 rounded-sm shadow-xl hover:scale-110 flex items-end transform cursor-pointer bg-cover"
-          onClick={() => onNewTemplateUrl(template.url)}
+          onClick={() => onNewTemplate(template.url, template._id)}
         >
           <div className="p-2 bg-gray-200 bg-opacity-50 text-xs rounded-xl m-1">
             {template.name}

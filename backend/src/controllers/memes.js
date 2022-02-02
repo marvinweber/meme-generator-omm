@@ -55,6 +55,7 @@ export const createMemeByFileUpload = async (req, res) => {
     req.body.captions && req.body.captions.length > 0
       ? JSON.parse(req.body.captions)
       : [];
+  const template = req.body.template || null;
 
   const md5 = req.files.meme.md5;
   const fileName = `${md5}.jpeg`;
@@ -81,6 +82,7 @@ export const createMemeByFileUpload = async (req, res) => {
       path: filePath,
       tags,
       captions,
+      template,
     })
       .save()
       .then((t) => t.populate('owner', 'name'));

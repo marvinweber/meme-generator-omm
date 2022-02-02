@@ -20,7 +20,7 @@ interface MemeConfig {
 const MemeEditor: React.FC<{
   templateUrl: string;
   templateId?: string;
-}> = ({ templateUrl }) => {
+}> = ({ templateUrl, templateId }) => {
   const [memeConfig, setMemeConfig] = useState<MemeConfig>({ texts: [] });
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [templateImage] = useState(new Image());
@@ -120,7 +120,7 @@ const MemeEditor: React.FC<{
         ? outputMemeTags.current?.value.split(" ")
         : [];
     // exclude empty tags (caused by multiple whitespaces)
-    return tags.filter(tag => !!tag);
+    return tags.filter((tag) => !!tag);
   };
 
   const createLocalAndDownload = () => {
@@ -151,12 +151,15 @@ const MemeEditor: React.FC<{
 
     const formData = new FormData();
     formData.append("meme", dataURIToBlob(image));
-    formData.append("name", outputMemeTitle.current?.value || 'No Title');
+    formData.append("name", outputMemeTitle.current?.value || "No Title");
     formData.append("tags", JSON.stringify(getOutputTags()));
     formData.append(
       "captions",
       JSON.stringify(memeConfig.texts.map((text) => text.text))
     );
+    if (templateId) {
+      formData.append("template", templateId);
+    }
 
     const uploadResult = await apiClient.post("/memes/file", formData, {
       headers: { "Content-Type": "multipart/form-data" },

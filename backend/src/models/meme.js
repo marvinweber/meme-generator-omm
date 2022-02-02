@@ -22,6 +22,10 @@ const memeSchema = new mongoose.Schema({
   path: String,
   tags: [String],
   captions: [String],
+  template: {
+    ref: 'template',
+    type: mongoose.Schema.Types.ObjectId,
+  },
 });
 memeSchema.virtual('url').get(function () {
   return `${

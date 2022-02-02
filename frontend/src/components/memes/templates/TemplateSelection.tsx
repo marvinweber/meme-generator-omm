@@ -4,11 +4,11 @@ import MemeTemplateSelectorBrowse from "./selectors/Browse";
 import MemeTemplateSelectorUploadFile from "./selectors/Upload";
 
 const MemeTemplateSelection: React.FC<{
-  onNewTemplateUrl: (url: string) => void;
-}> = ({ onNewTemplateUrl }) => {
+  onNewTemplate: (url: string, id?: string) => void;
+}> = ({ onNewTemplate }) => {
   const contents = [
-    <MemeTemplateSelectorBrowse onNewTemplateUrl={onNewTemplateUrl} />,
-    <MemeTemplateSelectorUploadFile onNewTemplateUrl={onNewTemplateUrl} />,
+    <MemeTemplateSelectorBrowse onNewTemplate={onNewTemplate} />,
+    <MemeTemplateSelectorUploadFile onNewTemplate={onNewTemplate} />,
     <div>TODO</div>,
     <div>TODO</div>,
     <div>TODO</div>,

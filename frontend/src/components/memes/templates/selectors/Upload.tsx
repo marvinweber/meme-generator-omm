@@ -2,8 +2,8 @@ import React, { useRef } from "react";
 import { apiClient } from "../../../..";
 
 const MemeTemplateSelectorUploadFile: React.FC<{
-  onNewTemplateUrl: (url: string) => void;
-}> = ({ onNewTemplateUrl }) => {
+  onNewTemplate: (url: string, id?: string) => void;
+}> = ({ onNewTemplate }) => {
   const fileUploadRef = useRef<HTMLInputElement>(null);
   const templateNameRef = useRef<HTMLInputElement>(null);
 
@@ -31,7 +31,10 @@ const MemeTemplateSelectorUploadFile: React.FC<{
       }
     );
     if (uploadResult.data.success) {
-      onNewTemplateUrl(uploadResult.data.templates[0].url);
+      onNewTemplate(
+        uploadResult.data.templates[0].url,
+        uploadResult.data.templates[0]._id
+      );
     } else {
       console.error("Could not upload template!");
     }
