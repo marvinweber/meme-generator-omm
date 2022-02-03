@@ -16,15 +16,249 @@ security:
   - bearerAuth: []
 tags:
   - name: Memes
+  - name: Memes > Create Meme
+  - name: Memes > Retrieve Memes
   - name: Auth
+  - name: Templates
 paths:
+  /memes/file:
+    post:
+      tags:
+        - Memes > Create Meme
+      summary: Create Meme by File Upload
+      description: Create a new Meme by uploading the Meme image file.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                meme:
+                  type: string
+                  format: binary
+                name:
+                  type: string
+                  example: my image
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /memes/config:
+    post:
+      tags:
+        - Memes > Create Meme
+      summary: Create Meme by Config
+      description: |-
+        Create a new Meme by uploading the Meme configuration.
+
+        Body (JSON formatted) goes as follows:
+
+        ``` json
+        {
+            "memeConfigs": [
+                {
+                    "templateId": "61f70d9c6378875975653b4f", // define template ID (no meme will be created, if id does not exist)
+                    "maxFileSize": 50, // optional: specify maximum filesize in KBs
+                    "title": "A new meme, no idea for a title!", // a title for the meme
+                    "tags": ["tag1", "meme", "dog"], // optional: add some tags
+                    "texts": [ // your captions (only text is obligatory, rest is optional)
+                        {
+                            "text": "First caption in red!",
+                            "xPos": 80,
+                            "yPos": 50,
+                            "size": 50,
+                            "italic": true,
+                            "color": "red"
+                        },
+                        {
+                            "text": "CAPTION 2!",
+                            "fontFamily": "Comic Sans MS",
+                            "xPos": 190,
+                            "yPos": 350,
+                            "size": 80,
+                            "bold": true,
+                            "color": "#4ec9b0"
+                        }
+                    ]
+                },
+                {
+                    "templateUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Hauskatze_langhaar.jpg/1280px-Hauskatze_langhaar.jpg", // instead of Template ID: you may also just provide a image url
+                    "title": "Funny Cat!", // a title for the meme
+                    "tags": ["tag1", "meme", "cat"], // optional: add some tags
+                    "texts": [ // your captions (only text is obligatory, rest is optional)
+                        {
+                            "text": "Hi",
+                            "xPos": 300,
+                            "yPos": 70,
+                            "size": 50,
+                            "italic": true,
+                            "color": "red"
+                        },
+                        {
+                            "text": "I AM A CAT!",
+                            "fontFamily": "Comic Sans MS",
+                            "xPos": 300,
+                            "yPos": 800,
+                            "size": 80,
+                            "bold": true,
+                            "color": "#4ec9b0"
+                        }
+                    ]
+                }
+            ]
+        }
+
+        ```
+
+        One entry in the memeConfigs for every meme to create.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                memeConfigs:
+                  - templateId: 61f70d9c6378875975653b4f
+                    maxFileSize: 50
+                    title: A new meme, no idea for a title!
+                    tags:
+                      - tag1
+                      - meme
+                      - dog
+                    texts:
+                      - text: First caption in red!
+                        xPos: 80
+                        yPos: 50
+                        size: 50
+                        italic: true
+                        color: red
+                      - text: CAPTION 2!
+                        fontFamily: Comic Sans MS
+                        xPos: 190
+                        yPos: 350
+                        size: 80
+                        bold: true
+                        color: '#4ec9b0'
+                  - templateUrl: >-
+                      https://i2.pickpik.com/photos/600/698/553/cat-winter-cold-snow-preview.jpg
+                    title: Funny Cat!
+                    tags:
+                      - tag1
+                      - meme
+                      - cat
+                    texts:
+                      - text: Hi
+                        xPos: 300
+                        yPos: 70
+                        size: 50
+                        italic: true
+                        color: red
+                      - text: I AM A CAT!
+                        fontFamily: Comic Sans MS
+                        xPos: 200
+                        yPos: 400
+                        size: 80
+                        bold: true
+                        color: '#4ec9b0'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /memes/:
     get:
       tags:
-        - Memes
+        - Memes > Retrieve Memes
       summary: Get all Memes
       security:
         - noauthAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /memes/{memeId}/:
+    get:
+      tags:
+        - Memes > Retrieve Memes
+      summary: Get specific Meme
+      description: Get details about one specific Meme.
+      security:
+        - noauthAuth: []
+      parameters:
+        - name: countView
+          in: query
+          schema:
+            type: boolean
+          description: >-
+            Parameter to control whether the call should be counted as view.
+            (must be "true" to be considered set)
+          example: 'true'
+        - name: memeId
+          in: path
+          schema:
+            type: string
+          required: true
+          description: >-
+            ID of the Meme to retrieve information/data for (comments, likes,
+            etc.)
+          example: 61f70b696c190d7f30a03d96
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /memes/random:
+    get:
+      tags:
+        - Memes > Retrieve Memes
+      summary: Get random Meme
+      description: Get details about one specific Meme.
+      security:
+        - noauthAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /memes/{memeId}/previous:
+    get:
+      tags:
+        - Memes > Retrieve Memes
+      summary: Get Previous Meme
+      description: Get details about one specific Meme.
+      security:
+        - noauthAuth: []
+      parameters:
+        - name: memeId
+          in: path
+          schema:
+            type: string
+          required: true
+          description: ID of the Meme to get the PREVIOUS Meme for.
+          example: 61faab34bfb44a016fb31761
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /memes/{memeId}/next:
+    get:
+      tags:
+        - Memes > Retrieve Memes
+      summary: Get Next Meme
+      description: Get details about one specific Meme.
+      security:
+        - noauthAuth: []
+      parameters:
+        - name: memeId
+          in: path
+          schema:
+            type: string
+          required: true
+          description: ID of the Meme to get the NEXT Meme for.
+          example: 61faab34bfb44a016fb31761
       responses:
         '200':
           description: Successful response
@@ -38,13 +272,11 @@ paths:
       description: Create a new comment on the specified meme.
       requestBody:
         content:
-          multipart/form-data:
+          application/json:
             schema:
               type: object
-              properties:
-                comment:
-                  type: integer
-                  example: '76545678765456787654'
+              example:
+                comment: Here goes the nice comment!
       parameters:
         - name: memeId
           in: path
@@ -57,23 +289,40 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /memes/{memeId}/:
-    get:
+  /memes/{memeId}/like:
+    post:
       tags:
         - Memes
-      summary: Get specific Meme
-      description: Get details about one specific Meme.
-      security:
-        - noauthAuth: []
+      summary: Like a Meme
+      description: Create a new comment on the specified meme.
+      requestBody:
+        content: {}
       parameters:
         - name: memeId
           in: path
           schema:
             type: string
           required: true
-          description: >-
-            ID of the Meme to retrieve information/data for (comments, likes,
-            etc.)
+          example: 61f70b696c190d7f30a03d96
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /memes/{memeId}/unlike:
+    post:
+      tags:
+        - Memes
+      summary: Unlike a Meme
+      description: Create a new comment on the specified meme.
+      requestBody:
+        content: {}
+      parameters:
+        - name: memeId
+          in: path
+          schema:
+            type: string
+          required: true
           example: 61f70b696c190d7f30a03d96
       responses:
         '200':
@@ -90,6 +339,18 @@ paths:
         authorization / authentification.
       requestBody:
         content: {}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /templates:
+    get:
+      tags:
+        - Templates
+      summary: Get all Templates
+      security:
+        - noauthAuth: []
       responses:
         '200':
           description: Successful response
