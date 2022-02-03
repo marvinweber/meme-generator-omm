@@ -18,25 +18,27 @@ const GOOGLE_APP_CLIENT_ID = process.env.GOOGLE_APP_CLIENT_ID;
  */
 export default async function parseAuthTokenFromHeader(req, res, next) {
   req.authenticated = false;
-
-  const authorizationHeader = req.headers.authorization;
-  if (!authorizationHeader) {
-    return next();
-  }
-  const [authType, authData] = authorizationHeader.split(' ');
-
   let authenticated, user;
-  switch (authType) {
-    case 'Bearer':
-      [authenticated, user] = await verifyBearerToken(authData);
-    default:
-      // no other login types (than Bearer Token / JWT) supported yet
-      break;
-  }
 
-  if (authenticated) {
-    req.authenticated = true;
-    req.user = user;
+  try {
+    const authorizationHeader = req.headers.authorization;
+    if (!authorizationHeader) {
+      return next();
+    }
+    const [authType, authData] = authorizationHeader.split(' ');
+
+    switch (authType) {
+      case 'Bearer':
+        [authenticated, user] = await verifyBearerToken(authData);
+      default:
+        // no other login types (than Bearer Token / JWT) supported yet
+        break;
+    }
+  } catch {} finally {
+    if (authenticated) {
+      req.authenticated = true;
+      req.user = user;
+    }
   }
 
   next();
