@@ -211,8 +211,8 @@ export const createMemeByConfig = async (req, res) => {
   for (const memeConfig of memeConfigs) {
     let templateId = memeConfig.templateId;
     let templateUrl = memeConfig.templateUrl;
-    const memeTitle = memeConfig.memeTitle || 'No Title';
-    const memeTags = memeConfig.memeTags || [];
+    const memeTitle = memeConfig.title || 'No Title';
+    const memeTags = memeConfig.tags || [];
     const maxFileSize = memeConfig.maxFileSize || Number.POSITIVE_INFINITY;
     const textConfigs = memeConfig.texts || [];
     const memeCaptions = textConfigs.map((textConfig) => textConfig.text);
