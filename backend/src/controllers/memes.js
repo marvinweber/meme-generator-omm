@@ -215,7 +215,7 @@ export const createMemeByConfig = async (req, res) => {
     const memeTags = memeConfig.memeTags || [];
     const maxFileSize = memeConfig.maxFileSize || Number.POSITIVE_INFINITY;
     const textConfigs = memeConfig.texts || [];
-    const memeCaptions = textConfigs.map(textConfig => textConfig.text);
+    const memeCaptions = textConfigs.map((textConfig) => textConfig.text);
 
     let templateModel;
     if (templateId) {
@@ -264,10 +264,11 @@ export const createMemeByConfig = async (req, res) => {
     })
       .save()
       .then((t) => t.populate('owner', 'name'));
-      createdMemes.push(memeObj);
+    createdMemes.push(memeObj);
   }
 
   res.json({
+    success: true,
     memes: createdMemes,
   });
 };

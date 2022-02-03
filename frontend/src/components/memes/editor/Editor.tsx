@@ -172,8 +172,34 @@ const MemeEditor: React.FC<{
     }
   };
 
-  const createOnlineAndPublish = () => {
-    // TODO
+  const createOnlineAndPublish = async () => {
+    const maxFileSize = getOutputMaxFileSize();
+
+    const formData = new FormData();
+    formData.append("name", outputMemeTitle.current?.value || "No Title");
+    formData.append("tags", JSON.stringify(getOutputTags()));
+
+    const srvMemeConfig: any = {
+      templateId,
+      templateUrl,
+      title: outputMemeTitle.current?.value || "No Title",
+      tags: getOutputTags(),
+      texts: memeConfig.texts,
+    };
+
+    if (maxFileSize !== Number.POSITIVE_INFINITY) {
+      srvMemeConfig["maxFileSize"] = maxFileSize;
+    }
+
+    const uploadResult = await apiClient.post("/memes/config", {
+      memeConfigs: [srvMemeConfig],
+    });
+    if (uploadResult.data.success) {
+      console.log("uploaded!", uploadResult.data);
+      // TODO: forward to single meme view
+    } else {
+      console.error("Could not upload template!");
+    }
   };
 
   return (
