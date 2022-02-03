@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from 'react-router-dom'
 import { apiClient } from "../../..";
 import MemeEditorTextSettingsList from "./text/SettingsList";
 
@@ -21,6 +22,8 @@ const MemeEditor: React.FC<{
   templateUrl: string;
   templateId?: string;
 }> = ({ templateUrl, templateId }) => {
+  const navigate = useNavigate();
+
   const [memeConfig, setMemeConfig] = useState<MemeConfig>({ texts: [] });
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [templateImage] = useState(new Image());
@@ -165,8 +168,8 @@ const MemeEditor: React.FC<{
       headers: { "Content-Type": "multipart/form-data" },
     });
     if (uploadResult.data.success) {
-      console.log("uploaded!");
-      // TODO: forward to single meme view
+      const memeId = uploadResult.data.memes[0]._id;
+      navigate(`/memes/${memeId}`);
     } else {
       console.error("Could not upload template!");
     }
@@ -195,8 +198,8 @@ const MemeEditor: React.FC<{
       memeConfigs: [srvMemeConfig],
     });
     if (uploadResult.data.success) {
-      console.log("uploaded!", uploadResult.data);
-      // TODO: forward to single meme view
+      const memeId = uploadResult.data.memes[0]._id;
+      navigate(`/memes/${memeId}`);
     } else {
       console.error("Could not upload template!");
     }
