@@ -2,6 +2,10 @@ import mongoose from 'mongoose';
 import { ROOT_DIR } from '../app.js';
 import MemeSchema from '../models/meme.js';
 import path from 'path';
+import Template from '../models/template.js';
+import { generateMeme } from '../lib/memeGenerator.js';
+import crypto from 'crypto';
+import fs from 'fs';
 
 export const getMemes = async (req, res) => {
   // TODO: pagination, filters, sorting, etc.
@@ -201,7 +205,71 @@ export const unlikeMeme = async (req, res) => {
 };
 
 export const createMemeByConfig = async (req, res) => {
-  res.status(500).json('not yet supported!');
+  const memeConfigs = req.body.memeConfigs || [];
+  const createdMemes = [];
+
+  for (const memeConfig of memeConfigs) {
+    let templateId = memeConfig.templateId;
+    let templateUrl = memeConfig.templateUrl;
+    const memeTitle = memeConfig.memeTitle || 'No Title';
+    const memeTags = memeConfig.memeTags || [];
+    const maxFileSize = memeConfig.maxFileSize || Number.POSITIVE_INFINITY;
+    const textConfigs = memeConfig.texts || [];
+    const memeCaptions = textConfigs.map(textConfig => textConfig.text);
+
+    let templateModel;
+    if (templateId) {
+      templateModel = await Template.findById(templateId);
+
+      // if invalid template id was given and no url was specified -> invalid config
+      if (!templateModel && !templateUrl) {
+        return;
+      } else if (templateModel) {
+        templateUrl = templateModel.url;
+      } else {
+        // avoid saving invalid template id
+        templateId = null;
+      }
+    }
+
+    // at least a template url and one meme configuration is required
+    if (!templateUrl || textConfigs.length === 0) {
+      return;
+    }
+
+    const meme = await generateMeme(templateUrl, textConfigs, maxFileSize);
+    const memeHash = crypto.createHash('md5').update(meme).digest('hex');
+    const fileName = `${memeHash}.png`;
+
+    const now = new Date();
+    const filePath = path.join(
+      'uploads/memes',
+      `${now.getFullYear()}/${now.getMonth() + 1}`,
+      fileName
+    );
+    const uploadPath = path.join(ROOT_DIR, 'public', filePath);
+
+    const memeImageData = meme.replace(/^data:image\/\w+;base64,/, '');
+    const bf = Buffer.from(memeImageData, 'base64');
+    fs.writeFileSync(uploadPath, bf);
+
+    const memeObj = await new MemeSchema({
+      owner: req.user._id,
+      title: memeTitle,
+      createdAt: now,
+      path: filePath,
+      tags: memeTags,
+      captions: memeCaptions,
+      template: templateId,
+    })
+      .save()
+      .then((t) => t.populate('owner', 'name'));
+      createdMemes.push(memeObj);
+  }
+
+  res.json({
+    memes: createdMemes,
+  });
 };
 
 export const createMemeByFileUpload = async (req, res) => {
