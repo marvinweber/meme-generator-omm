@@ -9,6 +9,8 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import parseAuthTokenFromHeader from './middleware/parseAuthTokenFromHeader.js';
+import swaggerUi from 'swagger-ui-express';
+import yaml from 'yamljs';
 
 //
 // Route Imports
@@ -61,6 +63,10 @@ app.use('/', indexRouter);
 app.use('/auth', authRouter);
 app.use('/memes', memeRouter);
 app.use('/templates', templateRouter);
+
+// API Docuemntation (Swagger / OpenAPI)
+const swaggerDocument = yaml.load(path.join(ROOT_DIR, '..', 'openapi.yml'));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

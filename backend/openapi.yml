@@ -1,0 +1,97 @@
+openapi: 3.0.0
+info:
+  title: OMM Meme
+  version: 1.0.0
+servers:
+  - url: http://{{apiurl}}
+components:
+  securitySchemes:
+    noauthAuth:
+      type: http
+      scheme: noauth
+    bearerAuth:
+      type: http
+      scheme: bearer
+security:
+  - bearerAuth: []
+tags:
+  - name: Memes
+  - name: Auth
+paths:
+  /memes/:
+    get:
+      tags:
+        - Memes
+      summary: Get all Memes
+      security:
+        - noauthAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /memes/{memeId}/comment:
+    post:
+      tags:
+        - Memes
+      summary: Comment on Meme
+      description: Create a new comment on the specified meme.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: integer
+                  example: '76545678765456787654'
+      parameters:
+        - name: memeId
+          in: path
+          schema:
+            type: string
+          required: true
+          example: 61f70b696c190d7f30a03d96
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /memes/{memeId}/:
+    get:
+      tags:
+        - Memes
+      summary: Get specific Meme
+      description: Get details about one specific Meme.
+      security:
+        - noauthAuth: []
+      parameters:
+        - name: memeId
+          in: path
+          schema:
+            type: string
+          required: true
+          description: >-
+            ID of the Meme to retrieve information/data for (comments, likes,
+            etc.)
+          example: 61f70b696c190d7f30a03d96
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/oauth/login:
+    post:
+      tags:
+        - Auth
+      summary: OAuth "Login"
+      description: >-
+        Simple Enpoint to verify OAuth (Google JWT) Token is working for
+        authorization / authentification.
+      requestBody:
+        content: {}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}

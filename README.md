@@ -6,6 +6,7 @@ Stack:
 - Backend: Express
 
 # Docs / Concepts
+For API Docs, see README.md of Backend.
 
 ## Sign in with Google
 ### General

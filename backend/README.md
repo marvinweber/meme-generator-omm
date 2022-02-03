@@ -23,3 +23,12 @@ credentials in the `config.env` files then, accordingly).
 ### Mongoose
 Mongoose is used for Model "Management";  
 getting started: https://mongoosejs.com/
+
+
+## API (Endpoint) Documentation
+Note: Currently WIP
+
+An OpenAPI specification file is used to serve a interactive API documentation
+page on: `http://localhost:3050/api-docs/`.  
+Currently, it is not created dynamically (from routes or so), but depends on the
+`openapi.yml` specification file, which should be kept up-to-date.
