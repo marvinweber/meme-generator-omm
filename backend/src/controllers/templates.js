@@ -22,7 +22,7 @@ export const uploadTemplateWithFile = async (req, res, next) => {
 
   const now = new Date();
   const md5 = req.files.template.md5;
-  const ending = path.extname(req.files.template.name);
+  const ending = path.extname(req.files.template.name) || ".jpg";
   const fileName = `${md5}${ending}`;
   const templateName = req.body.name || req.files.template.name;
 

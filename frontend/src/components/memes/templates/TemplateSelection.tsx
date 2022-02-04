@@ -1,7 +1,9 @@
 import React from "react";
 import TabbedContainer from "../../util/TabbedContainer";
 import MemeTemplateSelectorBrowse from "./selectors/Browse";
+import MemeTemplateSelectorImageUrl from "./selectors/ImageUrl";
 import MemeTemplateSelectorUploadFile from "./selectors/Upload";
+import MemeTemplateSelectorWebcam from "./selectors/Webcam";
 
 const MemeTemplateSelection: React.FC<{
   onNewTemplate: (url: string, id?: string) => void;
@@ -9,18 +11,14 @@ const MemeTemplateSelection: React.FC<{
   const contents = [
     <MemeTemplateSelectorBrowse onNewTemplate={onNewTemplate} />,
     <MemeTemplateSelectorUploadFile onNewTemplate={onNewTemplate} />,
-    <div>TODO</div>,
-    <div>TODO</div>,
-    <div>TODO</div>,
-    <div>TODO</div>,
+    <MemeTemplateSelectorImageUrl onNewTemplate={onNewTemplate} />,
+    <MemeTemplateSelectorWebcam onNewTemplate={onNewTemplate} />,
   ];
   const titles = [
     "Browse",
     "Upload",
     "From URL",
-    "Website Screenshot",
     "Record from camera",
-    "Draw",
   ];
   return (
     <div>
