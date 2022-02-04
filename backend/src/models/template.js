@@ -19,4 +19,6 @@ TemplateSchema.virtual('url').get(function () {
   }/${this.path.split(path.sep).join(path.posix.sep)}`;
 });
 
+TemplateSchema.set('toJSON', { getters: true, virtuals: true });
+
 export default mongoose.model('template', TemplateSchema);
