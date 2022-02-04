@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import path from 'path';
 
-const comment = new mongoose.Schema({
+const CommentSchema = new mongoose.Schema({
   author: {
     ref: 'user',
     type: mongoose.Schema.Types.ObjectId,
@@ -13,7 +13,7 @@ const comment = new mongoose.Schema({
   },
 });
 
-const like = new mongoose.Schema({
+const LikeSchema = new mongoose.Schema({
   liker: {
     ref: 'user',
     type: mongoose.Schema.Types.ObjectId,
@@ -24,7 +24,7 @@ const like = new mongoose.Schema({
   },
 });
 
-const view = new mongoose.Schema({
+const ViewSchema = new mongoose.Schema({
   viewer: {
     ref: 'user',
     type: mongoose.Schema.Types.ObjectId,
@@ -35,7 +35,7 @@ const view = new mongoose.Schema({
   },
 });
 
-const meme = new mongoose.Schema({
+const MemeSchema = new mongoose.Schema({
   owner: {
     ref: 'user',
     type: mongoose.Schema.Types.ObjectId,
@@ -45,17 +45,17 @@ const meme = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  comments: [comment],
+  comments: [CommentSchema],
   viewCount: {
     type: Number,
     default: 0,
   },
-  views: [view],
+  views: [ViewSchema],
   likeCount: {
     type: Number,
     default: 0,
   },
-  likes: [like],
+  likes: [LikeSchema],
   createdAt: {
     type: Date,
     default: new Date(),
@@ -69,13 +69,13 @@ const meme = new mongoose.Schema({
   },
 });
 
-meme.virtual('url').get(function () {
+MemeSchema.virtual('url').get(function () {
   return `${
     process.env.PUBLIC_URL
   }/${this.path.split(path.sep).join(path.posix.sep)}`;
 });
 
-meme.set('toJSON', { getters: true, virtuals: true });
+MemeSchema.set('toJSON', { getters: true, virtuals: true });
 
-const MemeSchema = mongoose.model('meme', meme);
-export default MemeSchema;
+const Meme = mongoose.model('meme', MemeSchema);
+export default Meme;

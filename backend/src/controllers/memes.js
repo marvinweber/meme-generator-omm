@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { ROOT_DIR } from '../app.js';
-import MemeSchema from '../models/meme.js';
+import Meme from '../models/meme.js';
 import path from 'path';
 import Template from '../models/template.js';
 import { generateMeme } from '../lib/memeGenerator.js';
@@ -11,7 +11,7 @@ export const getMemes = async (req, res) => {
   // TODO: pagination, filters, sorting, etc.
 
   try {
-    const memes = await MemeSchema.find()
+    const memes = await Meme.find()
       .sort({ createdAt: 'desc' })
       .populate('owner', 'name');
 
@@ -37,7 +37,7 @@ export const getMemeById = async (req, res) => {
     }
 
     // fetch and update meme
-    const meme = await MemeSchema.findByIdAndUpdate(memeId, update, {
+    const meme = await Meme.findByIdAndUpdate(memeId, update, {
       returnOriginal: false,
     })
       .select('-views')
@@ -57,12 +57,12 @@ export const getMemeById = async (req, res) => {
 
 export const getPreviousMemeForId = async (req, res) => {
   const memeId = req.params.id;
-  const meme = await MemeSchema.findById(memeId);
+  const meme = await Meme.findById(memeId);
   if (!meme) {
     return res.status(404).json({ success: false });
   }
 
-  const previousMeme = await MemeSchema.find({
+  const previousMeme = await Meme.find({
     createdAt: { $lt: meme.createdAt },
   })
     .sort('-createdAt')
@@ -76,12 +76,12 @@ export const getPreviousMemeForId = async (req, res) => {
 
 export const getNextMemeForId = async (req, res) => {
   const memeId = req.params.id;
-  const meme = await MemeSchema.findById(memeId);
+  const meme = await Meme.findById(memeId);
   if (!meme) {
     return res.status(404).json({ success: false });
   }
 
-  const nextMeme = await MemeSchema.find({
+  const nextMeme = await Meme.find({
     createdAt: { $gt: meme.createdAt },
   })
     .sort('+createdAt')
@@ -94,9 +94,9 @@ export const getNextMemeForId = async (req, res) => {
 };
 
 export const getRandomMeme = async (req, res) => {
-  const memeCount = await MemeSchema.countDocuments();
+  const memeCount = await Meme.countDocuments();
   const randomIndex = Math.floor(Math.random() * memeCount);
-  const meme = await MemeSchema.findOne().skip(randomIndex);
+  const meme = await Meme.findOne().skip(randomIndex);
   return res.json({ success: true, meme });
 };
 
@@ -106,7 +106,7 @@ export const postCommentOnMeme = async (req, res) => {
     const comment = { author: req.user._id, comment: req.body.comment };
 
     // fetch and update meme
-    const meme = await MemeSchema.findByIdAndUpdate(
+    const meme = await Meme.findByIdAndUpdate(
       memeId,
       {
         $inc: { commentCount: 1 },
@@ -135,7 +135,7 @@ export const likeMeme = async (req, res) => {
   try {
     const memeId = req.params.id;
 
-    let meme = await MemeSchema.findOne({
+    let meme = await Meme.findOne({
       _id: memeId,
       'likes.liker': req.user._id,
     })
@@ -149,7 +149,7 @@ export const likeMeme = async (req, res) => {
       return res.json({ success: true, meme });
     }
 
-    meme = await MemeSchema.findByIdAndUpdate(
+    meme = await Meme.findByIdAndUpdate(
       memeId,
       {
         $inc: { likeCount: 1 },
@@ -178,7 +178,7 @@ export const likeMeme = async (req, res) => {
 export const unlikeMeme = async (req, res) => {
   try {
     const memeId = req.params.id;
-    const meme = await MemeSchema.findByIdAndUpdate(
+    const meme = await Meme.findByIdAndUpdate(
       memeId,
       {
         $inc: { likeCount: -1 },
@@ -253,7 +253,7 @@ export const createMemeByConfig = async (req, res) => {
     const bf = Buffer.from(memeImageData, 'base64');
     fs.writeFileSync(uploadPath, bf);
 
-    const memeObj = await new MemeSchema({
+    const memeObj = await new Meme({
       owner: req.user._id,
       title: memeTitle,
       createdAt: now,
@@ -304,7 +304,7 @@ export const createMemeByFileUpload = async (req, res) => {
       return res.status(500).json({ success: false });
     }
 
-    const meme = await new MemeSchema({
+    const meme = await new Meme({
       owner: req.user._id,
       title: memeTitle,
       createdAt: now,
