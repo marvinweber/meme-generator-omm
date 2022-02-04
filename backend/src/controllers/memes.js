@@ -7,20 +7,96 @@ import { generateMeme } from '../lib/memeGenerator.js';
 import crypto from 'crypto';
 import fs from 'fs';
 
+/** Field allowed to sort by. */
+const SORT_ALLOWED_FIELDS = [
+  'createdAt',
+  'viewCount',
+  'likeCount',
+  'commentCount',
+];
+/** Possible sort directions. */
+const SORT_ALLOWED_DIRS = ['desc', 'asc'];
+
+/** Fields with numerical filters. */
+const NUMERIC_FILTERS = ['viewCount', 'likeCount', 'commentCount'];
+/** Allowed comparison operations for numerical filters. */
+const NUMERIC_FILTERS_ALLOWED_OPS = ['$lt', '$lte', '$gte', '$gt'];
+
+/** Fields with list filters (i.e., check multiple sub strings). */
+const LIST_FILTERS = ['title', 'captions', 'tags'];
+
+/** Fields to filter by other object id. */
+const ID_FILTERS = ['owner', 'template'];
+
 export const getMemes = async (req, res) => {
-  // TODO: pagination, filters, sorting, etc.
+  // pagination
+  const perPage = req.query.perPage || 30;
+  const page = req.query.p || 1;
+
+  const sortRequests = req.query.sort;
+  // ensure only valid sort requests
+  const sorting = Object.fromEntries(
+    Object.entries(sortRequests).filter(
+      ([sortField, sortDir]) =>
+        SORT_ALLOWED_FIELDS.includes(sortField) &&
+        SORT_ALLOWED_DIRS.includes(sortDir)
+    )
+  );
+
+  const filters = {};
+
+  // view count filter
+  NUMERIC_FILTERS.forEach((filterKey) => {
+    if (req.query[filterKey]) {
+      const [op, val] = Object.entries(req.query[filterKey])[0];
+      if (NUMERIC_FILTERS_ALLOWED_OPS.includes(op)) {
+        filters[filterKey] = { [op]: parseInt(val) };
+      }
+    }
+  });
+
+  // list filters
+  LIST_FILTERS.forEach((filterKey) => {
+    if (req.query[filterKey]) {
+      const filterVals = req.query[filterKey].split(' ');
+      filters[filterKey] = { $in: filterVals.map((v) => new RegExp(v, 'i')) };
+    }
+  });
+
+  // date / createdAt filter
+  if (req.query.createdAt) {
+    const [op, val] = Object.entries(req.query.createdAt)[0];
+    const date = new Date(val);
+    if (!isNaN(date) && NUMERIC_FILTERS_ALLOWED_OPS.includes(op)) {
+      filters['createdAt'] = { [op]: date };
+    }
+  }
+
+  ID_FILTERS.forEach((filterKey) => {
+    if (req.query[filterKey]) {
+      const filterVal = req.query[filterKey];
+      if (mongoose.isValidObjectId(filterVal)) {
+        filters[filterKey] = filterVal;
+      }
+    }
+  });
 
   try {
-    const memes = await Meme.find()
-      .sort({ createdAt: 'desc' })
-      .populate('owner', 'name');
+    const memes = await Meme.find(filters)
+      .select('-views')
+      .sort(sorting || { createdAt: 'desc' }) // fallback: sort by date descending
+      .skip((page - 1) * perPage)
+      .limit(perPage)
+      .populate('owner', 'name')
+      .populate('template', '-originalFilename');
 
     res.status(200).json({
       success: true,
       memes,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error(error);
+    res.status(500).json({ success: false });
   }
 };
 
@@ -43,7 +119,8 @@ export const getMemeById = async (req, res) => {
       .select('-views')
       .populate('owner', 'name profilePicUrl')
       .populate('comments.author', 'name profilePicUrl')
-      .populate('likes.liker', 'name profilePicUrl');
+      .populate('likes.liker', 'name profilePicUrl')
+      .populate('template', '-originalFilename');
 
     if (!meme) {
       return res.status(404).json({ success: false });
@@ -70,7 +147,8 @@ export const getPreviousMemeForId = async (req, res) => {
     .select('-views')
     .populate('owner', 'name profilePicUrl')
     .populate('comments.author', 'name profilePicUrl')
-    .populate('likes.liker', 'name profilePicUrl');
+    .populate('likes.liker', 'name profilePicUrl')
+    .populate('template', '-originalFilename');
   return res.json({ success: true, meme: previousMeme });
 };
 
@@ -89,7 +167,8 @@ export const getNextMemeForId = async (req, res) => {
     .select('-views')
     .populate('owner', 'name profilePicUrl')
     .populate('comments.author', 'name profilePicUrl')
-    .populate('likes.liker', 'name profilePicUrl');
+    .populate('likes.liker', 'name profilePicUrl')
+    .populate('template', '-originalFilename');
   return res.json({ success: true, meme: nextMeme });
 };
 
@@ -119,7 +198,8 @@ export const postCommentOnMeme = async (req, res) => {
       .select('-views')
       .populate('owner', 'name profilePicUrl')
       .populate('comments.author', 'name profilePicUrl')
-      .populate('likes.liker', 'name profilePicUrl');
+      .populate('likes.liker', 'name profilePicUrl')
+      .populate('template', '-originalFilename');
 
     if (!meme) {
       return res.status(404).json({ success: false });
@@ -142,7 +222,8 @@ export const likeMeme = async (req, res) => {
       .select('-views')
       .populate('owner', 'name profilePicUrl')
       .populate('comments.author', 'name profilePicUrl')
-      .populate('likes.liker', 'name profilePicUrl');
+      .populate('likes.liker', 'name profilePicUrl')
+      .populate('template', '-originalFilename');
 
     // user has already liked that meme
     if (meme) {
@@ -191,7 +272,8 @@ export const unlikeMeme = async (req, res) => {
       .select('-views')
       .populate('owner', 'name profilePicUrl')
       .populate('comments.author', 'name profilePicUrl')
-      .populate('likes.liker', 'name profilePicUrl');
+      .populate('likes.liker', 'name profilePicUrl')
+      .populate('template', '-originalFilename');
 
     // meme not found
     if (!meme) {
