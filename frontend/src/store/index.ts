@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
+import singleMemeViewSettingsReducer from "./slices/singleMemeViewSettingsSlice";
 import userReducer from "./slices/userSlice";
 
 const store = configureStore({
   reducer: {
     user: userReducer,
+    singleMemeViewSettings: singleMemeViewSettingsReducer,
   },
 });
 

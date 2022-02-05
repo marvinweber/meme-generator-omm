@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface UserState {
   loggedIn: boolean;
   user: {
+    _id?: string;
     email?: string;
     name?: string;
     imageUrl?: string;
@@ -13,6 +14,7 @@ interface UserState {
 const initialState: UserState = {
   loggedIn: false,
   user: {
+    _id: undefined,
     email: undefined,
     name: undefined,
     imageUrl: undefined,
@@ -21,6 +23,7 @@ const initialState: UserState = {
 };
 
 type UserLoginPayload = {
+  _id: string;
   email: string;
   name: string;
   imageUrl?: string;
@@ -33,6 +36,7 @@ export const userSlice = createSlice({
   reducers: {
     login: (state, action: PayloadAction<UserLoginPayload>) => {
       state.loggedIn = true;
+      state.user._id = action.payload._id;
       state.user.email = action.payload.email;
       state.user.name = action.payload.name;
       state.user.imageUrl = action.payload.imageUrl;
@@ -40,6 +44,7 @@ export const userSlice = createSlice({
     },
     logout: (state) => {
       state.loggedIn = false;
+      state.user._id = undefined;
       state.user.email = undefined;
       state.user.name = undefined;
       state.user.imageUrl = undefined;

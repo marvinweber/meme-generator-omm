@@ -35,13 +35,15 @@ export const getMemes = async (req, res) => {
 
   const sortRequests = req.query.sort;
   // ensure only valid sort requests
-  const sorting = Object.fromEntries(
-    Object.entries(sortRequests).filter(
-      ([sortField, sortDir]) =>
-        SORT_ALLOWED_FIELDS.includes(sortField) &&
-        SORT_ALLOWED_DIRS.includes(sortDir)
-    )
-  );
+  const sorting = sortRequests
+    ? Object.fromEntries(
+        Object.entries(sortRequests).filter(
+          ([sortField, sortDir]) =>
+            SORT_ALLOWED_FIELDS.includes(sortField) &&
+            SORT_ALLOWED_DIRS.includes(sortDir)
+        )
+      )
+    : null;
 
   const filters = {};
 
@@ -88,6 +90,8 @@ export const getMemes = async (req, res) => {
       .skip((page - 1) * perPage)
       .limit(perPage)
       .populate('owner', 'name')
+      .populate('comments.author', 'name profilePicUrl')
+      .populate('likes.liker', 'name profilePicUrl')
       .populate('template', '-originalFilename');
 
     res.status(200).json({
@@ -139,7 +143,7 @@ export const getPreviousMemeForId = async (req, res) => {
     return res.status(404).json({ success: false });
   }
 
-  const previousMeme = await Meme.find({
+  const previousMeme = await Meme.findOne({
     createdAt: { $lt: meme.createdAt },
   })
     .sort('-createdAt')
@@ -159,7 +163,7 @@ export const getNextMemeForId = async (req, res) => {
     return res.status(404).json({ success: false });
   }
 
-  const nextMeme = await Meme.find({
+  const nextMeme = await Meme.findOne({
     createdAt: { $gt: meme.createdAt },
   })
     .sort('+createdAt')
