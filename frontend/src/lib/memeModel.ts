@@ -1,4 +1,5 @@
 export interface MemeModel {
+  _id: string;
   id: string;
   title: string;
   createdAt: Date;
@@ -19,6 +20,7 @@ export interface MemeModel {
 export function apiMemeToMemeModel(meme: any): MemeModel {
   return {
     ...meme,
+    id: meme._id,
     createdAt: new Date(meme.createdAt),
     user: meme.owner.name,
   } as MemeModel;

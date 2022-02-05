@@ -143,7 +143,7 @@ export const getPreviousMemeForId = async (req, res) => {
     return res.status(404).json({ success: false });
   }
 
-  const previousMeme = await Meme.find({
+  const previousMeme = await Meme.findOne({
     createdAt: { $lt: meme.createdAt },
   })
     .sort('-createdAt')
@@ -163,7 +163,7 @@ export const getNextMemeForId = async (req, res) => {
     return res.status(404).json({ success: false });
   }
 
-  const nextMeme = await Meme.find({
+  const nextMeme = await Meme.findOne({
     createdAt: { $gt: meme.createdAt },
   })
     .sort('+createdAt')
