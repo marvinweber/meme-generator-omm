@@ -20,22 +20,23 @@ const GoogleAuthButton: React.FC<{ text?: string }> = ({ text }) => {
    *
    * @param response
    */
-  const responseGoogleSuccess = (response: GoogleLoginResponse) => {
-    console.log(response);
+  const responseGoogleSuccess = async (response: GoogleLoginResponse) => {
     const idToken = response.tokenObj.id_token;
-
-    dispatch(
-      login({
-        email: response.profileObj.email,
-        name: response.profileObj.name,
-        imageUrl: response.profileObj.imageUrl,
-        token: idToken,
-      })
-    );
 
     // set axios default values and make login request to backend
     apiClient.defaults.headers.common["Authorization"] = `Bearer ${idToken}`;
-    apiClient.get("/auth/oauth/login");
+    const loginResult = await apiClient.get("/auth/oauth/login");
+    if (loginResult.data.success) {
+      dispatch(
+        login({
+          _id: loginResult.data.user._id,
+          email: response.profileObj.email,
+          name: response.profileObj.name,
+          imageUrl: response.profileObj.imageUrl,
+          token: idToken,
+        })
+      );
+    }
   };
 
   /** Error handler for Google OAuth Login. */
