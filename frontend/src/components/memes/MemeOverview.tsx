@@ -9,13 +9,11 @@ const MemeOverview = () => {
 
   useEffect(() => {
     apiClient.get("/memes").then((res) => {
-      console.log(res);
       if (res.data.success) {
         const feMemeModels = res.data.memes.map((m: any) =>
           apiMemeToMemeModel(m)
         );
         setMemes(feMemeModels);
-        console.log(feMemeModels);
       }
     });
   }, [page]);
@@ -25,10 +23,10 @@ const MemeOverview = () => {
       <div className="flex flex-row">
         <div className="basis-2/3">
           {memes.map((m) => (
-            <>
-              <Meme meme={m} key={m.id} />
+            <div key={m._id}>
+              <Meme meme={m} />
               <hr className="my-8" />
-            </>
+            </div>
           ))}
         </div>
         <div className="basis-1/3 my-8">
