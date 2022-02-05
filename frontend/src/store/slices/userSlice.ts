@@ -44,6 +44,7 @@ export const userSlice = createSlice({
     },
     logout: (state) => {
       state.loggedIn = false;
+      state.user._id = undefined;
       state.user.email = undefined;
       state.user.name = undefined;
       state.user.imageUrl = undefined;
