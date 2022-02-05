@@ -3,6 +3,7 @@ import {
   mdiDownload,
   mdiHeart,
   mdiShareVariant,
+  mdiTextToSpeech,
 } from "@mdi/js";
 import Icon from "@mdi/react";
 import React, { useEffect, useState } from "react";
@@ -10,6 +11,7 @@ import { NavLink } from "react-router-dom";
 import { apiClient } from "../../..";
 import { useAppSelector } from "../../../hooks";
 import { MemeModel } from "../../../lib/memeModel";
+import memeToSpeech from "../../../lib/memeToSpeech";
 
 const Meme: React.FC<{
   meme: MemeModel;
@@ -20,6 +22,7 @@ const Meme: React.FC<{
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [likes, setLikes] = useState(meme.likes);
   const [likeCount, setLikeCount] = useState(meme.likeCount);
+  const [memeToSpeechActive, setMemeToSpeechActive] = useState(false);
 
   // update values depending on meme
   useEffect(() => {
@@ -62,11 +65,25 @@ const Meme: React.FC<{
     window.open(meme.url, "_blank");
   };
 
+  const onMemeToSpeech = () => {
+    setMemeToSpeechActive(true);
+    memeToSpeech(meme).then(() => setMemeToSpeechActive(false));
+  };
+
   return (
     <div className="flex flex-col flex-grow">
-      <NavLink to={`/memes/${meme.id}`}>
-        <h1 className="text-4xl">{meme.title}</h1>
-      </NavLink>
+      <div className="flex justify-between">
+        <NavLink to={`/memes/${meme.id}`}>
+          <h1 className="text-4xl">{meme.title}</h1>
+        </NavLink>
+        <button onClick={onMemeToSpeech} disabled={memeToSpeechActive}>
+          <Icon
+            path={mdiTextToSpeech}
+            size={1.5}
+            color={memeToSpeechActive ? "green" : "black"}
+          />
+        </button>
+      </div>
       <div>{meme.tags.map((m) => `#${m}`).join(" ")}</div>
       <div className="mt-2">
         <NavLink to={`/memes/${meme.id}`}>
