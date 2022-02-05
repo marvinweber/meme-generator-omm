@@ -6,6 +6,8 @@ import VisibilitySensor from "react-visibility-sensor";
 import Icon from "@mdi/react";
 import { mdiCloseOctagonOutline } from "@mdi/js";
 
+const MEMES_PER_PAGE = process.env.REACT_APP_OVERVIEW_PER_PAGE
+
 const MemeOverview = () => {
   const [memes, setMemes] = useState<MemeModel[]>([]);
   const [requestedPage, setPage] = useState(1);
@@ -28,7 +30,7 @@ const MemeOverview = () => {
     const page = requestedPage;
     setLoading(true);
     const params = {
-      perPage: 2,
+      perPage: MEMES_PER_PAGE,
       p: page,
     };
 
