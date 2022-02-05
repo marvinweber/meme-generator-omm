@@ -17,6 +17,7 @@ import {
   toggleShuffle,
 } from "../../store/slices/singleMemeViewSettingsSlice";
 import Meme from "./meme/Meme";
+import MemeComments from "./meme/MemeComments";
 
 // frequency (in ms) how often a new meme should be loaded in autoplay mode
 const AUTOPLAY_FREQUENCY = 1000 * 10; // 10 seconds
@@ -120,6 +121,16 @@ const MemeSingleView: React.FC<{ memeId: string }> = ({ memeId }) => {
           <Icon path={mdiArrowRightCircleOutline} size={1.5} />
         </div>
       </div>
+
+      <hr className="my-5" />
+
+      <MemeComments
+        memeId={meme._id}
+        comments={meme.comments}
+        onNewComment={(newMeme) => setMeme(newMeme)}
+      />
+
+      <hr className="my-10" />
     </div>
   ) : (
     <div>Loading...</div>

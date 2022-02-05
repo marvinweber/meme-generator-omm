@@ -8,13 +8,22 @@ export interface MemeModel {
   commentCount: number;
   viewCount: number;
   likeCount: number;
-  comments: any[];
+  comments: MemeComment[];
   likes: any[];
   owner: {
     name: string;
     profilePicUrl: string;
   };
   url: string;
+}
+
+export interface MemeComment {
+  _id: string;
+  author: {
+    name: string;
+  }
+  comment: string;
+  posted: any;
 }
 
 export function apiMemeToMemeModel(meme: any): MemeModel {
