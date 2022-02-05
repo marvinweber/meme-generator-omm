@@ -38,12 +38,14 @@ const MemeSingleView: React.FC<{ memeId: string }> = ({ memeId }) => {
   const [meme, setMeme] = useState<MemeModel>();
 
   useEffect(() => {
-    apiClient.get(`/memes/${memeId}`).then((res) => {
-      if (res.data.success) {
-        setMemeReady(true);
-        setMeme(apiMemeToMemeModel(res.data.meme));
-      }
-    });
+    apiClient
+      .get(`/memes/${memeId}`, { params: { countView: "true" } })
+      .then((res) => {
+        if (res.data.success) {
+          setMemeReady(true);
+          setMeme(apiMemeToMemeModel(res.data.meme));
+        }
+      });
   }, [memeId]);
 
   const previousMeme = async () => {

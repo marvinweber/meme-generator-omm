@@ -1,5 +1,6 @@
 import {
   mdiCommentMultipleOutline,
+  mdiCounter,
   mdiDownload,
   mdiHeart,
   mdiShareVariant,
@@ -120,6 +121,12 @@ const Meme: React.FC<{
           <button onClick={share}>
             <Icon path={mdiShareVariant} size={1} />
           </button>
+        </div>
+
+        {/* View Count */}
+        <div className="flex items-center mr-3" title="Views">
+          <Icon path={mdiCounter} size={1} />
+          <span>{meme.viewCount}</span>
         </div>
 
         {/* Comment Count */}
