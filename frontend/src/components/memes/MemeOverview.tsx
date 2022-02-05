@@ -2,32 +2,97 @@ import { useEffect, useState } from "react";
 import { apiClient } from "../..";
 import { apiMemeToMemeModel, MemeModel } from "../../lib/memeModel";
 import Meme from "./meme/Meme";
+import VisibilitySensor from "react-visibility-sensor";
+import Icon from "@mdi/react";
+import { mdiCloseOctagonOutline } from "@mdi/js";
 
 const MemeOverview = () => {
   const [memes, setMemes] = useState<MemeModel[]>([]);
-  const [page, setPage] = useState(1);
+  const [requestedPage, setPage] = useState(1);
+  const [lastLoadedPage, setLastLoadedPage] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [endReached, setEndReached] = useState(false);
 
   useEffect(() => {
-    apiClient.get("/memes").then((res) => {
+    // avoid multiple concurrent requests and further requests if the end
+    // has been reached
+    if (loading || endReached) {
+      return;
+    }
+    // avoid loading the same page multiple times; also don't allow loading
+    // older pages again
+    if (requestedPage <= lastLoadedPage) {
+      return;
+    }
+
+    const page = requestedPage;
+    setLoading(true);
+    const params = {
+      perPage: 2,
+      p: page,
+    };
+
+    apiClient.get("/memes", { params }).then((res) => {
       if (res.data.success) {
-        const feMemeModels = res.data.memes.map((m: any) =>
-          apiMemeToMemeModel(m)
-        );
-        setMemes(feMemeModels);
+        if (res.data.memes.length > 0) {
+          const feMemeModels: MemeModel[] = res.data.memes.map((m: any) =>
+            apiMemeToMemeModel(m)
+          );
+          const newMemes = [...memes];
+          newMemes.push(...feMemeModels);
+          setMemes(newMemes);
+          setLastLoadedPage(page);
+        } else {
+          setEndReached(true);
+        }
+        // avoid visibility sensor triggered before memes are rendered
+        setTimeout(() => setLoading(false), 100);
       }
     });
-  }, [page]);
+  }, [requestedPage]);
+
+  const onScrolledToEndChanged = (visible: boolean) => {
+    // trigger loading next page if user scrolled to bottom of overwiew and
+    // neither all memes have already been loading nor a request is currently
+    // progressing
+    console.log(visible && !endReached && !loading);
+    if (visible && !endReached && !loading) {
+      setPage(requestedPage + 1);
+    }
+  };
 
   return (
     <div>
       <div className="flex flex-row">
-        <div className="basis-2/3">
+        <div className="basis-2/3 pb-10">
           {memes.map((m) => (
             <div key={m._id}>
               <Meme meme={m} />
               <hr className="my-8" />
             </div>
           ))}
+          <div className="text-center">
+            {/* Detect "scrolled to bottom" not during loading or if no memes
+                are loaded yet (initially)! */}
+            {!loading && memes.length > 0 && !endReached ? (
+              <VisibilitySensor
+                partialVisibility={true}
+                onChange={onScrolledToEndChanged}
+              >
+                <div>Loading more items...</div>
+              </VisibilitySensor>
+            ) : (
+              <></>
+            )}
+            {endReached ? (
+              <div className="flex justify-center">
+                <Icon path={mdiCloseOctagonOutline} size={1} className="mr-2" />
+                <span>You have reached the end!</span>
+              </div>
+            ) : (
+              <></>
+            )}
+          </div>
         </div>
         <div className="basis-1/3 my-8">
           <header className="grid place-content-center mb-8 py-6 bg-slate-400">
