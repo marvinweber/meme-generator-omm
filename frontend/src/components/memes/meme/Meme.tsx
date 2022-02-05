@@ -21,7 +21,13 @@ const Meme: React.FC<{
   const [likes, setLikes] = useState(meme.likes);
   const [likeCount, setLikeCount] = useState(meme.likeCount);
 
+  // update values depending on meme
   useEffect(() => {
+    // like data
+    setLikes(meme.likes);
+    setLikeCount(meme.likeCount);
+
+    // single view url of the meme
     const protocol = document.location.protocol;
     const host = document.location.host;
     setMemeViewUrl(`${protocol}//${host}/memes/${meme.id}`);
