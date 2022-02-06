@@ -6,6 +6,7 @@ import Template from '../models/template.js';
 import { generateMeme } from '../lib/memeGenerator.js';
 import crypto from 'crypto';
 import fs from 'fs';
+import User from '../models/user.js';
 
 /** Field allowed to sort by. */
 const SORT_ALLOWED_FIELDS = [
@@ -24,9 +25,6 @@ const NUMERIC_FILTERS_ALLOWED_OPS = ['$lt', '$lte', '$gte', '$gt'];
 
 /** Fields with list filters (i.e., check multiple sub strings). */
 const LIST_FILTERS = ['title', 'captions', 'tags'];
-
-/** Fields to filter by other object id. */
-const ID_FILTERS = ['owner', 'template'];
 
 export const getMemes = async (req, res) => {
   // pagination
@@ -74,14 +72,27 @@ export const getMemes = async (req, res) => {
     }
   }
 
-  ID_FILTERS.forEach((filterKey) => {
-    if (req.query[filterKey]) {
-      const filterVal = req.query[filterKey];
-      if (mongoose.isValidObjectId(filterVal)) {
-        filters[filterKey] = filterVal;
-      }
-    }
-  });
+  // filter by template name
+  if (req.query.template) {
+    const filterVals = req.query.template.split(' ');
+    const templates = (
+      await Template.find({
+        name: { $in: filterVals.map((v) => new RegExp(v, 'i')) },
+      }).select('_id')
+    ).map((t) => t._id);
+    filters['template'] = { $in: templates }
+  }
+
+  // filter by uploader (user) name
+  if (req.query.owner) {
+    const filterVals = req.query.owner.split(' ');
+    const owners = (
+      await User.find({
+        name: { $in: filterVals.map((v) => new RegExp(v, 'i')) },
+      }).select('_id')
+    ).map((u) => u._id);
+    filters['owner'] = { $in: owners }
+  }
 
   try {
     const memes = await Meme.find(filters)

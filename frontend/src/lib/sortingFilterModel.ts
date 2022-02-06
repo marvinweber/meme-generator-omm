@@ -1,7 +1,7 @@
 export type SortingField = "DATE" | "VIEWS" | "LIKES" | "COMMENTS";
 export type SortDirection = "ASC" | "DESC";
 
-export type COMPARE_OPERATION = "LESS_THAN" | "GREATER_THAN";
+export type CompareOperation = "LESS_THAN" | "GREATER_THAN";
 
 const SPORTING_FIELD_PARAM_NAME_MAPPING = {
   DATE: "createdAt",
@@ -10,9 +10,14 @@ const SPORTING_FIELD_PARAM_NAME_MAPPING = {
   COMMENTS: "commentCount",
 };
 
+const COMPARE_OPERATION_PARAM_NAME_MAPPING = {
+  LESS_THAN: "$lt",
+  GREATER_THAN: "$gt",
+};
+
 export interface DateFilter {
   value: string;
-  operation: COMPARE_OPERATION;
+  operation: CompareOperation;
 }
 
 export interface StringFilter {
@@ -21,7 +26,7 @@ export interface StringFilter {
 
 export interface NumericalFilter {
   value: number;
-  operation: COMPARE_OPERATION;
+  operation: CompareOperation;
 }
 
 export interface SortingModel {
@@ -60,14 +65,62 @@ export function getDefaultSortingFilterModel(): SortingFilterModel {
   };
 }
 
+/**
+ * Generate a axios request params object containing the filter/ sorting
+ * configuration of the given model in the "backend-understandable-form".
+ * 
+ * @param m SortingFilter model to convert to axios request params.
+ * @returns The axios request params as object.
+ */
 export function sortingFilterModelToAxiosReqParams(m: SortingFilterModel) {
-  return {
+  const model = {
     ...sortingModelToAxiosReqParams(m.sorting),
   };
+
+  // add text search filters
+  if (m.filter.title?.value && m.filter.title.value.length > 0) {
+    model["title"] = m.filter.title.value;
+  }
+  if (m.filter.captions?.value && m.filter.captions.value.length > 0) {
+    model["captions"] = m.filter.captions.value;
+  }
+  if (m.filter.tags?.value && m.filter.tags.value.length > 0) {
+    model["tags"] = m.filter.tags.value;
+  }
+  if (m.filter.user?.value && m.filter.user.value.length > 0) {
+    model["owner"] = m.filter.user.value;
+  }
+  if (m.filter.template?.value && m.filter.template.value.length > 0) {
+    model["owner"] = m.filter.template.value;
+  }
+
+  // add numerical / compare filters
+  if (
+    m.filter.createdAtFilter?.value &&
+    m.filter.createdAtFilter.value.length > 0
+  ) {
+    const op =
+      COMPARE_OPERATION_PARAM_NAME_MAPPING[m.filter.createdAtFilter.operation];
+    model[`createdAt[${op}]`] = m.filter.createdAtFilter.value;
+  }
+  if (m.filter.views && m.filter.views?.value >= 0) {
+    const op = COMPARE_OPERATION_PARAM_NAME_MAPPING[m.filter.views.operation];
+    model[`viewCount[${op}]`] = m.filter.views.value;
+  }
+  if (m.filter.likes && m.filter.likes?.value >= 0) {
+    const op = COMPARE_OPERATION_PARAM_NAME_MAPPING[m.filter.likes.operation];
+    model[`likeCount[${op}]`] = m.filter.likes.value;
+  }
+  if (m.filter.comments && m.filter.comments?.value >= 0) {
+    const op =
+      COMPARE_OPERATION_PARAM_NAME_MAPPING[m.filter.comments.operation];
+    model[`commentCount[${op}]`] = m.filter.comments.value;
+  }
+  return model;
 }
 
 function sortingModelToAxiosReqParams(m: SortingModel): any {
-  const field = SPORTING_FIELD_PARAM_NAME_MAPPING[m.field]
+  const field = SPORTING_FIELD_PARAM_NAME_MAPPING[m.field];
   return {
     [`sort[${field}]`]: m.direction.toLowerCase(),
   };
