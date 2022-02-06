@@ -5,15 +5,24 @@ import Meme from "./meme/Meme";
 import VisibilitySensor from "react-visibility-sensor";
 import Icon from "@mdi/react";
 import { mdiCloseOctagonOutline } from "@mdi/js";
+import OverviewSortingAndFilters from "./overview/SortingAndFilters";
+import SortingFilterModel, {
+  getDefaultSortingFilterModel,
+  sortingFilterModelToAxiosReqParams,
+} from "../../lib/sortingFilterModel";
 
-const MEMES_PER_PAGE = process.env.REACT_APP_OVERVIEW_PER_PAGE
+const MEMES_PER_PAGE = process.env.REACT_APP_OVERVIEW_PER_PAGE;
 
 const MemeOverview = () => {
   const [memes, setMemes] = useState<MemeModel[]>([]);
-  const [requestedPage, setPage] = useState(1);
+  const [requestedPage, setRequestedPage] = useState(1);
   const [lastLoadedPage, setLastLoadedPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [endReached, setEndReached] = useState(false);
+
+  const [sortingFilterModel, setSortingFilterModel] =
+    useState<SortingFilterModel>(getDefaultSortingFilterModel());
+  const [sortingFilterCtr, setSortingFilterCtr] = useState(0);
 
   useEffect(() => {
     // avoid multiple concurrent requests and further requests if the end
@@ -32,6 +41,7 @@ const MemeOverview = () => {
     const params = {
       perPage: MEMES_PER_PAGE,
       p: page,
+      ...sortingFilterModelToAxiosReqParams(sortingFilterModel),
     };
 
     apiClient.get("/memes", { params }).then((res) => {
@@ -51,7 +61,21 @@ const MemeOverview = () => {
         setTimeout(() => setLoading(false), 100);
       }
     });
-  }, [requestedPage]);
+  }, [requestedPage, sortingFilterCtr]);
+
+  useEffect(() => {
+    // trigger reload by setting page and ensure page is loaded again
+    setLastLoadedPage(0);
+    setEndReached(false);
+    setMemes([]);
+
+    // if only one page has been loaded: use counter to trigger reloading memes
+    if (requestedPage === 1) {
+      setSortingFilterCtr(sortingFilterCtr + 1);
+    } else {
+      setRequestedPage(1);
+    }
+  }, [sortingFilterModel]);
 
   const onScrolledToEndChanged = (visible: boolean) => {
     // trigger loading next page if user scrolled to bottom of overwiew and
@@ -59,14 +83,14 @@ const MemeOverview = () => {
     // progressing
     console.log(visible && !endReached && !loading);
     if (visible && !endReached && !loading) {
-      setPage(requestedPage + 1);
+      setRequestedPage(requestedPage + 1);
     }
   };
 
   return (
     <div>
-      <div className="flex flex-row">
-        <div className="basis-2/3 pb-10">
+      <div className="flex flex-col-reverse lg:flex-row">
+        <div className="basis-2/3 pb-10 px-2">
           {memes.map((m) => (
             <div key={m._id}>
               <Meme meme={m} />
@@ -96,18 +120,11 @@ const MemeOverview = () => {
             )}
           </div>
         </div>
-        <div className="basis-1/3 my-8">
-          <header className="grid place-content-center mb-8 py-6 bg-slate-400">
-            <p>Filter</p>
-          </header>
-
-          <header className="grid place-content-center mb-8 py-6 bg-slate-400">
-            <p>Sort</p>
-          </header>
-
-          <header className="grid place-content-center mb-8 py-6 bg-slate-400">
-            <p>Search</p>
-          </header>
+        <div className="basis-1/3 px-2">
+          <OverviewSortingAndFilters
+            model={sortingFilterModel}
+            setModel={setSortingFilterModel}
+          />
         </div>
       </div>
     </div>
