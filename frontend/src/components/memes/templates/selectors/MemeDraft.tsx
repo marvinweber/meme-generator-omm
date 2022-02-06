@@ -18,7 +18,6 @@ const MemeTemplateSelectorMemeDraft: React.FC<{
     apiClient.get("/memes/drafts").then((res) => {
       if (res.data.success) {
         setMemeDrafts(res.data.memeDrafts);
-        console.log(memeDrafts);
       }
     });
   }, [ctr]);
