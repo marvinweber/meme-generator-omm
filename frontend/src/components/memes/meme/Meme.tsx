@@ -82,6 +82,7 @@ const Meme: React.FC<{
             path={mdiTextToSpeech}
             size={1.5}
             color={memeToSpeechActive ? "green" : "black"}
+            spin={memeToSpeechActive}
           />
         </button>
       </div>
