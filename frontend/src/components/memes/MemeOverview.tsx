@@ -81,7 +81,6 @@ const MemeOverview = () => {
     // trigger loading next page if user scrolled to bottom of overwiew and
     // neither all memes have already been loading nor a request is currently
     // progressing
-    console.log(visible && !endReached && !loading);
     if (visible && !endReached && !loading) {
       setRequestedPage(requestedPage + 1);
     }
