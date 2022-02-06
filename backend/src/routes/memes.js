@@ -1,5 +1,10 @@
 import express from 'express';
 import {
+  deleteMemeDraft,
+  getMemeDrafts,
+  saveMemeDraft,
+} from '../controllers/memeDrafts.js';
+import {
   getMemes,
   createMemeByConfig,
   deleteMeme,
@@ -14,6 +19,10 @@ import {
 } from '../controllers/memes.js';
 import requireAuthentication from '../middleware/requireAuthentication.js';
 const router = express.Router();
+
+router.get('/drafts', [requireAuthentication], getMemeDrafts);
+router.post('/drafts', [requireAuthentication], saveMemeDraft);
+router.delete('/drafts/:id', [requireAuthentication], deleteMemeDraft);
 
 router.get('/', getMemes);
 router.get('/random', getRandomMeme);

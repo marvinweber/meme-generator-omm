@@ -1,31 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 import { apiClient } from "../../..";
 import dataURIToBlob from "../../../lib/dataUriToBlob";
+import { MemeConfig, MemeText } from "../../../lib/memeConfigInterface";
 import MemeEditorTextSettingsList from "./text/SettingsList";
-
-export interface MemeText {
-  text: string;
-  size: number;
-  xPos: number;
-  yPos: number;
-  fontFamily: string;
-  color?: string;
-  bold?: boolean;
-  italic?: boolean;
-}
-interface MemeConfig {
-  image?: string;
-  texts: MemeText[];
-}
 
 const MemeEditor: React.FC<{
   templateUrl: string;
   templateId?: string;
-}> = ({ templateUrl, templateId }) => {
+  memeConfig: MemeConfig;
+  setMemeConfig: (mc: MemeConfig) => void;
+}> = ({ templateUrl, templateId, memeConfig, setMemeConfig }) => {
   const navigate = useNavigate();
 
-  const [memeConfig, setMemeConfig] = useState<MemeConfig>({ texts: [] });
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [templateImage] = useState(new Image());
 
@@ -34,6 +21,8 @@ const MemeEditor: React.FC<{
   const outputMemeTags = useRef<HTMLInputElement>(null);
   const outputFileSizeLimitCheckbox = useRef<HTMLInputElement>(null);
   const outputFileSizeLimitInput = useRef<HTMLInputElement>(null);
+
+  const [draftName, setDraftName] = useState("");
 
   // hook to update template image if templateUrl changes
   useEffect(() => {
@@ -206,6 +195,21 @@ const MemeEditor: React.FC<{
     }
   };
 
+  /** Send a request to the backend to save current meme config as draft. */
+  const saveDraft = async () => {
+    const payload = {
+      name: draftName,
+      templateUrl,
+      templateId,
+      memeConfig: JSON.stringify(memeConfig),
+    };
+    const res = await apiClient.post("/memes/drafts", payload);
+    if (res.data.success) {
+      alert("Draft has been saved!");
+      setDraftName('');
+    }
+  };
+
   return (
     <>
       <div className="flex items-start flex-col md:flex-row">
@@ -219,7 +223,8 @@ const MemeEditor: React.FC<{
           clearTexts={() => updateMemeTexts([])}
         />
       </div>
-      <hr className="my-2" />
+
+      <hr className="my-5" />
 
       {/* Create / Output Options and Buttons */}
       <div className="flex flex-col">
@@ -276,6 +281,32 @@ const MemeEditor: React.FC<{
           Create Online &amp; Publish
         </button>
       </div>
+
+      <hr className="my-5" />
+
+      {/* Save as Draft */}
+      <div className="flex flex-col">
+        <h3 className="text-xl">Save Draft</h3>
+        <div className="flex">
+          <input
+            value={draftName}
+            onChange={(e) => setDraftName(e.target.value)}
+            placeholder="Draft Name"
+            className="border-2 border-gray-500 rounded-md p-1 flex-grow"
+          />
+          <button
+            onClick={saveDraft}
+            className="border-2 p-2 mb-2 rounded-md hover:bg-green-600 hover:border-green-600
+                     hover:text-white disabled:hover:bg-white disabled:text-gray-300 disabled:hover:text-gray-300
+                     disabled:hover:border-gray-300 disabled:border-gray-300"
+            disabled={memeConfig.texts.length === 0}
+          >
+            Save
+          </button>
+        </div>
+      </div>
+
+      <hr className="my-5" />
     </>
   );
 };

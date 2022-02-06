@@ -1,5 +1,5 @@
 import React from "react";
-import { MemeText } from "../Editor";
+import { MemeText } from "../../../../lib/memeConfigInterface";
 import MemeEditorTextSetting from "./Setting";
 
 const MemeEditorTextSettingsList: React.FC<{

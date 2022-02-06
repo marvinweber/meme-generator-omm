@@ -1,5 +1,5 @@
 import React from "react";
-import { MemeText } from "../Editor";
+import { MemeText } from "../../../../lib/memeConfigInterface";
 
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 const fontFamilies = [
