@@ -92,7 +92,7 @@ const MemeOverview = () => {
         <div className="basis-2/3 pb-10 px-2">
           {memes.map((m) => (
             <div key={m._id}>
-              <Meme meme={m} />
+              <Meme meme={m} countInteractionsAsView={true} />
               <hr className="my-8" />
             </div>
           ))}

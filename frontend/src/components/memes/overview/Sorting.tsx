@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SortingModel } from "../../../lib/sortingFilterModel";
 
 const OverviewSorting: React.FC<{
@@ -8,6 +8,11 @@ const OverviewSorting: React.FC<{
   const [selectionValue, setSelectionValue] = useState<string>(
     sortingModelToSelectVal(sortingModel)
   );
+
+  // ensure to update selection if model (from prop) changes
+  useEffect(() => {
+    setSelectionValue(sortingModelToSelectVal(sortingModel));
+  }, [sortingModel]);
 
   const updateSorting = (selectVal: string) => {
     setSortingModel(selectValToSortingModel(selectVal));
