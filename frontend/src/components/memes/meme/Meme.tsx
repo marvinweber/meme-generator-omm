@@ -7,7 +7,7 @@ import {
   mdiTextToSpeech,
 } from "@mdi/js";
 import Icon from "@mdi/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { apiClient } from "../../..";
 import { useAppSelector } from "../../../hooks";
@@ -16,7 +16,12 @@ import memeToSpeech from "../../../lib/memeToSpeech";
 
 const Meme: React.FC<{
   meme: MemeModel;
-}> = ({ meme }) => {
+  /** Flag whether to count interactions (likes, share, download, meme to
+   *  speech) as meme view. Defaults to false. Only one view is counted over
+   *  the lifetime of the component (no matter how many interactions are
+   *  made). */
+  countInteractionsAsView?: boolean;
+}> = ({ meme, countInteractionsAsView }) => {
   const loggedIn = useAppSelector((state) => state.user.loggedIn);
   const userId = useAppSelector((state) => state.user.user._id);
   const [memeViewUrl, setMemeViewUrl] = useState<string>("");
@@ -24,6 +29,7 @@ const Meme: React.FC<{
   const [likes, setLikes] = useState(meme.likes);
   const [likeCount, setLikeCount] = useState(meme.likeCount);
   const [memeToSpeechActive, setMemeToSpeechActive] = useState(false);
+  const viewCounted = useRef(false);
 
   // update values depending on meme
   useEffect(() => {
@@ -51,26 +57,42 @@ const Meme: React.FC<{
     }
 
     const endpoint = isLiked ? "unlike" : "like";
-    const response = await apiClient.post(`/memes/${meme.id}/${endpoint}`);
+    const response = await apiClient.post(`/memes/${meme._id}/${endpoint}`);
     if (response.data.success) {
       setLikeCount(response.data.meme.likeCount);
       setLikes(response.data.meme.likes);
     }
+    countView();
   };
 
   const share = () => {
     navigator.clipboard.writeText(memeViewUrl).then(() => {
       alert("Link copied to clipboard!");
     });
+    countView();
   };
 
   const download = () => {
     window.open(meme.url, "_blank");
+    countView();
   };
 
   const onMemeToSpeech = () => {
     setMemeToSpeechActive(true);
     memeToSpeech(meme).then(() => setMemeToSpeechActive(false));
+    countView();
+  };
+
+  const countView = () => {
+    // skip view count if not requested via prop or already done
+    if (!countInteractionsAsView || viewCounted.current) {
+      return;
+    }
+
+    viewCounted.current = true;
+    apiClient.get(`/memes/${meme._id}`, {
+      params: { countView: "true" },
+    });
   };
 
   return (
@@ -149,4 +171,9 @@ const Meme: React.FC<{
     </div>
   );
 };
+
+Meme.defaultProps = {
+  countInteractionsAsView: false,
+};
+
 export default Meme;
