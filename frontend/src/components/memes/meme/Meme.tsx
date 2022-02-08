@@ -37,6 +37,8 @@ const Meme: React.FC<{
     setMemeViewUrl(`${protocol}//${host}/memes/${meme.id}`);
   }, [meme]);
 
+  // hook to update the "is liked" status whenever new likes are available
+  // or the user login state changes
   useEffect(() => {
     const liked = likes.filter((like) => like.liker._id === userId).length > 0;
     setIsLiked(liked);
