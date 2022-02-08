@@ -52,9 +52,11 @@ export default function UserProfile() {
               Note: you should not send this token to anyone, it is meant to be
               exclusivley used by you!
             </p>
-            <textarea className="border-2 rounded-md p-2 h-36" readOnly>
-              {user.token}
-            </textarea>
+            <textarea
+              className="border-2 rounded-md p-2 h-36"
+              readOnly
+              value={user.token}
+            ></textarea>
             <button
               onClick={copyTokenToClipboard}
               className="border-2 rounded-md p-2 mt-2 hover:bg-green-900 hover:text-white"
