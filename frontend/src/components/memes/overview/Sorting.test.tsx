@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import Sorting from "./Sorting";
 import { SortingModel } from "../../../lib/sortingFilterModel";
 
@@ -45,4 +45,21 @@ test("sorting components updates select value properly", () => {
   );
   // check that select has correct value
   expect(screen.getByRole("combobox")).toHaveValue("DATE_DESC");
+});
+
+test("sorting component calls setSortingModel on changed sorting", () => {
+  const setSortingModel = jest.fn();
+  const sortingModel: SortingModel = {
+    direction: "ASC",
+    field: "VIEWS",
+  };
+  render(
+    <Sorting sortingModel={sortingModel} setSortingModel={setSortingModel} />
+  );
+  const select = screen.getByRole("combobox");
+  fireEvent.change(select, { target: { value: "COMMENTS_DESC" } });
+  expect(setSortingModel).toBeCalledWith({
+    direction: "DESC",
+    field: "COMMENTS",
+  });
 });
