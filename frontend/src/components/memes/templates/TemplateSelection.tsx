@@ -1,3 +1,10 @@
+import {
+  mdiArchiveEditOutline,
+  mdiCloudUploadOutline,
+  mdiLinkBoxOutline,
+  mdiViewGalleryOutline,
+  mdiWebcam,
+} from "@mdi/js";
 import React from "react";
 import { MemeConfig } from "../../../lib/memeConfigInterface";
 import TabbedContainer from "../../util/TabbedContainer";
@@ -29,9 +36,21 @@ const MemeTemplateSelection: React.FC<{
     "Record from camera",
     "Meme Draft",
   ];
+  const icons = [
+    mdiViewGalleryOutline,
+    mdiCloudUploadOutline,
+    mdiLinkBoxOutline,
+    mdiWebcam,
+    mdiArchiveEditOutline,
+  ];
   return (
     <div>
-      <TabbedContainer titles={titles} contents={contents} maxHeight={500} />
+      <TabbedContainer
+        titles={titles}
+        contents={contents}
+        icons={icons}
+        maxHeight={500}
+      />
     </div>
   );
 };
