@@ -16,8 +16,10 @@ import {
   toggleAutoplay,
   toggleShuffle,
 } from "../../store/slices/singleMemeViewSettingsSlice";
+import Expandable from "../util/Expandable";
 import Meme from "./meme/Meme";
 import MemeComments from "./meme/MemeComments";
+import MemeStats from "./meme/MemeStats";
 
 // frequency (in ms) how often a new meme should be loaded in autoplay mode
 const AUTOPLAY_FREQUENCY = 1000 * 10; // 10 seconds
@@ -133,6 +135,10 @@ const MemeSingleView: React.FC<{ memeId: string }> = ({ memeId }) => {
       />
 
       <hr className="my-10" />
+
+      <Expandable heading="Statistics" content={<MemeStats meme={meme} />} />
+
+      <hr className="my-16" />
     </div>
   ) : (
     <div>Loading...</div>

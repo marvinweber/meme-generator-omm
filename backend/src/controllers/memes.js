@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { ROOT_DIR } from '../app.js';
+import moment from 'moment';
 import Meme from '../models/meme.js';
 import path from 'path';
 import Template from '../models/template.js';
@@ -80,7 +81,7 @@ export const getMemes = async (req, res) => {
         name: { $in: filterVals.map((v) => new RegExp(v, 'i')) },
       }).select('_id')
     ).map((t) => t._id);
-    filters['template'] = { $in: templates }
+    filters['template'] = { $in: templates };
   }
 
   // filter by uploader (user) name
@@ -91,7 +92,7 @@ export const getMemes = async (req, res) => {
         name: { $in: filterVals.map((v) => new RegExp(v, 'i')) },
       }).select('_id')
     ).map((u) => u._id);
-    filters['owner'] = { $in: owners }
+    filters['owner'] = { $in: owners };
   }
 
   try {
@@ -420,6 +421,104 @@ export const createMemeByFileUpload = async (req, res) => {
   });
 };
 
+export const getMemeStats = async (req, res) => {
+  const memeId = req.params.id;
+  const meme = await Meme.findById(memeId);
+
+  // meme not found
+  if (!meme) {
+    return res.status(404).json({ success: false });
+  }
+
+  const startDate = moment(meme.createdAt);
+  const endDate = moment.now();
+
+  const viewsPerDay = countArrayOccurances(
+    meme.views.map((v) => moment(v.date).format('YYYY-MM-DD'))
+  );
+  const likesPerDay = countArrayOccurances(
+    meme.likes.map((l) => moment(l.liked).format('YYYY-MM-DD'))
+  );
+  const commentsPerDay = countArrayOccurances(
+    meme.comments.map((c) => moment(c.posted).format('YYYY-MM-DD'))
+  );
+
+  const viewsPerDayFilled = fillMissingDates(startDate, endDate, viewsPerDay);
+  const labels = Object.keys(viewsPerDayFilled);
+  const views = Object.values(viewsPerDayFilled);
+  const likes = Object.values(
+    fillMissingDates(startDate, endDate, likesPerDay)
+  );
+  const comments = Object.values(
+    fillMissingDates(startDate, endDate, commentsPerDay)
+  );
+
+  /** Generator for a mapping function to create a cummulated sum list from
+   *  the array the mapped function is applied to. */
+  const getCumSum = () => {
+    return (
+      (sum) => (value) =>
+        (sum += value)
+    )(0);
+  };
+  const viewsCummulated = views.map(getCumSum());
+  const likesCummulated = likes.map(getCumSum());
+  const commentsCummulated = comments.map(getCumSum());
+
+  const labelsFormatted = labels.map((l) => moment(l).format('DD.MM.YYYY'));
+
+  return res.json({
+    success: true,
+    labels,
+    labelsFormatted,
+    views,
+    viewsCummulated,
+    likes,
+    likesCummulated,
+    comments,
+    commentsCummulated,
+    meme,
+  });
+};
+
 export const deleteMeme = async (req, res) => {
   // TODO
 };
+
+/** Count occurence of each distinct item in the array. Returnd as a
+ *  "grouped object". */
+function countArrayOccurances(arr) {
+  const counts = {};
+  for (const el of arr) {
+    if (counts[el]) {
+      counts[el] += 1;
+    } else {
+      counts[el] = 1;
+    }
+  }
+  return counts;
+}
+
+/**
+ * Takes an object with date (YYYY-MM-DD) keys -> values and fills missing
+ * dates with given fillWith (default: 0) value.
+ * 
+ * @param {moment.Moment} start first date in the resulting object
+ * @param {moment.Moment} end last date in the resulting object
+ * @param {{}} dateStatsObj
+ * @param {*} fillWith value to fill missing dates with
+ * 
+ * @returns {{}} filled object.
+ */
+function fillMissingDates(start, end, dateStatsObj, fillWith = 0) {
+  const obj = {};
+  const date = start.clone();
+  do {
+    const dateStr = date.format('YYYY-MM-DD');
+    obj[dateStr] = dateStatsObj.hasOwnProperty(dateStr)
+      ? dateStatsObj[dateStr]
+      : fillWith;
+    date.add(1, 'day');
+  } while (date.isBefore(end));
+  return obj;
+}
