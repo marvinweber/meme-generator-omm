@@ -16,13 +16,14 @@ const Expandable: React.FC<{ heading: string; content: React.ReactNode }> = ({
           onClick={() => setOpen(!open)}
           className="p-1 rounded-md border border-slate-300 hover:bg-slate-200"
         >
-          <div className="flex items-center">
-            <span className="text-slate-600 text-xs mr-1">
+          <div className="flex items-center text-slate-600">
+            <span className="text-xs mr-1">
               {open ? "Close" : "Open"}
             </span>
             <Icon
               path={open ? mdiArrowUpCircleOutline : mdiArrowDownCircleOutline}
-              size={1}
+              size={.9}
+              className="text-inherit"
             />
           </div>
         </button>
