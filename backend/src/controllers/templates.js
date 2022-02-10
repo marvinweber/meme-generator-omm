@@ -22,7 +22,7 @@ export const uploadTemplateWithFile = async (req, res, next) => {
 
   const now = new Date();
   const md5 = req.files.template.md5;
-  const ending = path.extname(req.files.template.name) || ".jpg";
+  const ending = path.extname(req.files.template.name) || '.jpg';
   const fileName = `${md5}${ending}`;
   const templateName = req.body.name || req.files.template.name;
 
@@ -129,4 +129,17 @@ const downloadImage = async (url, downloadPath) => {
       }
     });
   });
+};
+
+export const deleteTemplate = async (req, res) => {
+  const template = await Template.findById(req.params.id);
+
+  // only allow deletion of own templates
+  if (!template || !template.uploadUser.equals(req.user._id)) {
+    return res.status(401).json({ success: false });
+  }
+
+  // delete template
+  await Template.findByIdAndDelete(req.params.id);
+  return res.json({ success: true });
 };

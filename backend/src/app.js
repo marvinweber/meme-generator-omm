@@ -19,6 +19,7 @@ import authRouter from './routes/auth.js';
 import indexRouter from './routes/index.js';
 import memeRouter from './routes/memes.js';
 import templateRouter from './routes/template.js';
+import userRouter from './routes/user.js';
 
 export const ROOT_DIR = dirname(fileURLToPath(import.meta.url));
 
@@ -63,6 +64,7 @@ app.use('/', indexRouter);
 app.use('/auth', authRouter);
 app.use('/memes', memeRouter);
 app.use('/templates', templateRouter);
+app.use('/user', userRouter);
 
 // API Docuemntation (Swagger / OpenAPI)
 const swaggerDocument = yaml.load(path.join(ROOT_DIR, '..', 'openapi.yml'));

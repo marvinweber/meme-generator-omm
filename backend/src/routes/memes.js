@@ -36,6 +36,6 @@ router.post('/:id/like', likeMeme);
 router.post('/:id/unlike', unlikeMeme);
 router.post('/file', [requireAuthentication], createMemeByFileUpload);
 router.post('/config', [requireAuthentication], createMemeByConfig);
-// router.delete('/:id', deleteMeme);
+router.delete('/:id', [requireAuthentication], deleteMeme);
 
 export default router;

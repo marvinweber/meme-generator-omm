@@ -482,7 +482,15 @@ export const getMemeStats = async (req, res) => {
 };
 
 export const deleteMeme = async (req, res) => {
-  // TODO
+  const meme = await Meme.findById(req.params.id);
+  // only allow deletion of own memes
+  if (!meme || !meme.owner.equals(req.user._id)) {
+    return res.status(401).json({ success: false });
+  }
+
+  // delete meme
+  await Meme.findByIdAndDelete(req.params.id);
+  return res.json({ success: true });
 };
 
 /** Count occurence of each distinct item in the array. Returnd as a
@@ -502,12 +510,12 @@ function countArrayOccurances(arr) {
 /**
  * Takes an object with date (YYYY-MM-DD) keys -> values and fills missing
  * dates with given fillWith (default: 0) value.
- * 
+ *
  * @param {moment.Moment} start first date in the resulting object
  * @param {moment.Moment} end last date in the resulting object
  * @param {{}} dateStatsObj
  * @param {*} fillWith value to fill missing dates with
- * 
+ *
  * @returns {{}} filled object.
  */
 function fillMissingDates(start, end, dateStatsObj, fillWith = 0) {

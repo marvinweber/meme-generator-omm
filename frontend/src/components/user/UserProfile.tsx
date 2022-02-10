@@ -3,6 +3,8 @@ import Icon from "@mdi/react";
 import { useAppSelector } from "../../hooks";
 import GoogleAuthButton from "../login/GoogleAuthButton";
 import Expandable from "../util/Expandable";
+import UserMemes from "./UserMemes";
+import UserTemplates from "./UserTemplates";
 
 export default function UserProfile() {
   const user = useAppSelector((state) => state.user.user);
@@ -31,6 +33,13 @@ export default function UserProfile() {
       </div>
 
       <hr className="my-5" />
+
+      <Expandable heading="Your Memes" content={<UserMemes />} />
+      <div className="h-2"></div>
+      <Expandable heading="Your Templates" content={<UserTemplates />} />
+
+      <hr className="my-5" />
+
       <Expandable
         heading="API"
         content={
@@ -39,6 +48,7 @@ export default function UserProfile() {
               The API Docs are available here:{" "}
               <a
                 className="text-yellow-800 hover:underline"
+                rel="noreferrer"
                 href={apiDocsUrl}
                 target="_blank"
               >
