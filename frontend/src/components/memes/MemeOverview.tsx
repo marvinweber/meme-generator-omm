@@ -4,7 +4,7 @@ import { apiMemeToMemeModel, MemeModel } from "../../lib/memeModel";
 import Meme from "./meme/Meme";
 import VisibilitySensor from "react-visibility-sensor";
 import Icon from "@mdi/react";
-import { mdiCloseOctagonOutline } from "@mdi/js";
+import { mdiCloseOctagonOutline, mdiLoading } from "@mdi/js";
 import OverviewSortingAndFilters from "./overview/SortingAndFilters";
 import SortingFilterModel, {
   getDefaultSortingFilterModel,
@@ -109,6 +109,18 @@ const MemeOverview = () => {
             ) : (
               <></>
             )}
+
+            {/* Show loading spinner during loading of memes. */}
+            {loading ? (
+              <div className="flex justify-center">
+                <Icon path={mdiLoading} size={1} spin={true} />
+                <span>You have reached the end!</span>
+              </div>
+            ) : (
+              <></>
+            )}
+
+            {/* Show not about no more memes availalble */}
             {endReached ? (
               <div className="flex justify-center">
                 <Icon path={mdiCloseOctagonOutline} size={1} className="mr-2" />
@@ -119,6 +131,8 @@ const MemeOverview = () => {
             )}
           </div>
         </div>
+
+        {/* Sorting Side / Top Bar */}
         <div className="basis-1/3 px-2">
           <OverviewSortingAndFilters
             model={sortingFilterModel}
