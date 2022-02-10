@@ -1,3 +1,5 @@
+import { mdiCamera } from "@mdi/js";
+import Icon from "@mdi/react";
 import React, { useEffect, useRef, useState } from "react";
 import { apiClient } from "../../../..";
 import dataURIToBlob from "../../../../lib/dataUriToBlob";
@@ -9,6 +11,8 @@ const MemeTemplateSelectorWebcam: React.FC<{
   const templateNameRef = useRef<HTMLInputElement>(null);
   const [snapshotDataUrl, setSnapshotDataUrl] = useState<string>();
 
+  // hook to initially request access to media devices and start video stream
+  // of the webcam
   useEffect(() => {
     const video = videoRef.current;
     if (video && navigator.mediaDevices.getUserMedia) {
@@ -67,29 +71,40 @@ const MemeTemplateSelectorWebcam: React.FC<{
 
   return (
     <div className="flex flex-col">
-      <strong>Template Image Upload</strong>
-      <div className="flex my-2">
-        Optional name for the template:
+      <strong>Create Template from Webcam</strong>
+
+      {/* Template Name */}
+      <div className="flex flex-col my-3">
+        <span className="text-sm">Optional name for the template:</span>
         <input
           ref={templateNameRef}
           type="text"
           placeholder="Template Name"
           name="templateName"
-          className="border-1 rounded-md"
+          className="border rounded-md p-1 flex-grow"
         />
       </div>
-      <div className="flex justify-between">
-        {snapshotDataUrl ? (
-          <img src={snapshotDataUrl} alt="Snapshot of the Webcam" />
-        ) : (
-          <video ref={videoRef} autoPlay></video>
-        )}
-        <button
-          onClick={uploadHandler}
-          className="p-1 rounded-xl border-2 border-blue-700 hover:bg-blue-700 hover:text-white"
-        >
-          Upload
-        </button>
+
+      {/* Webcam */}
+      <div className="flex">
+        <div className="rounded-l-lg">
+          {snapshotDataUrl ? (
+            <img className="rounded-l-lg" src={snapshotDataUrl} alt="Snapshot of the Webcam" />
+          ) : (
+            <video className="rounded-l-lg" ref={videoRef} autoPlay></video>
+          )}
+        </div>
+        <div className="flex-grow">
+          <button
+            onClick={uploadHandler}
+            className="p-1 rounded-r-lg border border-blue-500 text-blue-500 hover:bg-blue-400 
+                     hover:text-white flex items-center justify-center
+                      w-full h-full"
+          >
+            <Icon path={mdiCamera} size={0.8} />
+            Upload
+          </button>
+        </div>
       </div>
     </div>
   );

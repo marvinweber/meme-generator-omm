@@ -1,3 +1,5 @@
+import { mdiUploadOutline } from "@mdi/js";
+import Icon from "@mdi/react";
 import React, { useRef } from "react";
 import { apiClient } from "../../../..";
 
@@ -32,28 +34,34 @@ const MemeTemplateSelectorImageUrl: React.FC<{
 
   return (
     <div className="flex flex-col">
-      <strong>Template Image Upload (by URL)</strong>
-      <div className="flex my-2">
-        Optional name for the template:
+      <strong>Add Template via URL</strong>
+
+      {/* Template Name */}
+      <div className="flex flex-col my-3">
+        <span className="text-sm">Optional name for the template:</span>
         <input
           ref={templateNameRef}
           type="text"
           placeholder="Template Name"
           name="templateName"
-          className="border-1 rounded-md"
+          className="border rounded-md p-1 flex-grow"
         />
       </div>
-      <div className="flex justify-between">
+
+      {/* URL Input */}
+      <div className="flex flex-col md:flex-row justify-between">
         <input
           ref={imageUrlRef}
           type="text"
           placeholder="URL to the image (https only)"
-          className="w-full"
+          className="flex-grow p-1 border rounded-md"
         />
         <button
           onClick={uploadHandler}
-          className="p-1 rounded-xl border-2 border-blue-700 hover:bg-blue-700 hover:text-white"
+          className="p-1 rounded-lg border border-blue-500 text-blue-500 hover:bg-blue-400 
+                     hover:text-white flex items-center justify-center"
         >
+          <Icon path={mdiUploadOutline} size={0.8} />
           Upload
         </button>
       </div>
