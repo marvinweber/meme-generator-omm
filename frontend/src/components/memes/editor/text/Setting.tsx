@@ -23,27 +23,29 @@ const MemeEditorTextSetting: React.FC<{
   id: number;
   updateText: (id: number, newText: MemeText) => void;
   removeText: (id: number) => void;
-}> = ({ text, id, updateText, removeText }) => {
+  /** Amount (in pixels) to move a text by one button click. */
+  moveTextAmount?: number;
+}> = ({ text, id, updateText, removeText, moveTextAmount }) => {
   /**
    * Move the texts position in the given direction by the given amount.
    *
    * @param direction direction to move the text to
    * @param amount numeric amount of the move
    */
-  const moveText = (direction: Direction, amount: number = 10) => {
+  const moveText = (direction: Direction) => {
     const newText = { ...text };
     switch (direction) {
       case "UP":
-        newText.yPos -= amount;
+        newText.yPos -= moveTextAmount || 10;
         break;
       case "DOWN":
-        newText.yPos += amount;
+        newText.yPos += moveTextAmount || 10;
         break;
       case "LEFT":
-        newText.xPos -= amount;
+        newText.xPos -= moveTextAmount || 10;
         break;
       case "RIGHT":
-        newText.xPos += amount;
+        newText.xPos += moveTextAmount || 10;
         break;
     }
     updateText(id, newText);
@@ -157,7 +159,7 @@ const MemeEditorTextSetting: React.FC<{
             <span className="text-sm">Size:</span>
               <input
                 type="number"
-                style={{ width: "60px" }}
+                style={{ width: "80px" }}
                 min={1}
                 max={10000}
                 value={text.size}

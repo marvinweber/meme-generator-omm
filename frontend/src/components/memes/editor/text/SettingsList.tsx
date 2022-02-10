@@ -8,12 +8,23 @@ const MemeEditorTextSettingsList: React.FC<{
   texts: MemeText[];
   updateTexts: (newTexts: MemeText[]) => void;
   clearTexts: () => void;
-}> = ({ texts, updateTexts, clearTexts }) => {
+  /** Amount (in pixels) to move a text by one button click. */
+  moveTextAmount?: number;
+  /** Default size for a new text. */
+  newTextDefaultSize?: number;
+}> = ({
+  texts,
+  updateTexts,
+  clearTexts,
+  moveTextAmount,
+  newTextDefaultSize,
+}) => {
   /** Add new empty text. */
   const addText = () => {
+    const size = newTextDefaultSize || 80;
     const newTexts = [
       ...texts,
-      { text: "New Text", size: 80, xPos: 3, yPos: 80, fontFamily: "Arial" },
+      { text: "New Text", size, xPos: 3, yPos: size, fontFamily: "Arial" },
     ];
     updateTexts(newTexts);
   };
@@ -58,15 +69,18 @@ const MemeEditorTextSettingsList: React.FC<{
       </div>
 
       {/* Text Settings List */}
-      {texts.length > 0 ? texts.map((text, index) => (
-        <MemeEditorTextSetting
-          key={index}
-          text={text}
-          id={index}
-          updateText={updateText}
-          removeText={removeText}
-        />
-      )) : (
+      {texts.length > 0 ? (
+        texts.map((text, index) => (
+          <MemeEditorTextSetting
+            key={index}
+            text={text}
+            id={index}
+            updateText={updateText}
+            removeText={removeText}
+            moveTextAmount={moveTextAmount}
+          />
+        ))
+      ) : (
         <div className="flex justify-center mt-10">
           <Icon path={mdiTextRecognition} size={1} className="mr-1" />
           No Captions added yet!

@@ -26,6 +26,9 @@ const MemeEditor: React.FC<{
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [templateImage] = useState(new Image());
 
+  const [moveTextAmount, setMoveTextAmount] = useState(10);
+  const [defaultTextSize, setDefaultTextSize] = useState(80);
+
   // refs for "create options"
   const outputMemeTitle = useRef<HTMLInputElement>(null);
   const outputMemeTags = useRef<HTMLInputElement>(null);
@@ -39,6 +42,11 @@ const MemeEditor: React.FC<{
     // draw meme after image has been loaded
     templateImage.onload = () => {
       drawMeme();
+
+      // set default text sizes and text movement depending on
+      // template image height
+      setDefaultTextSize(templateImage.height * 0.1);
+      setMoveTextAmount(templateImage.height * 0.05)
     };
     templateImage.src = templateUrl;
     templateImage.crossOrigin = "anonymous";
@@ -227,11 +235,16 @@ const MemeEditor: React.FC<{
   return (
     <>
       <div className="grid grid-cols-1 lg:grid-cols-2">
-        <canvas ref={canvasRef} className="shadow-lg rounded-md w-full"></canvas>
+        <canvas
+          ref={canvasRef}
+          className="shadow-lg rounded-md w-full"
+        ></canvas>
         <MemeEditorTextSettingsList
           texts={memeConfig.texts}
           updateTexts={updateMemeTexts}
           clearTexts={() => updateMemeTexts([])}
+          moveTextAmount={moveTextAmount}
+          newTextDefaultSize={defaultTextSize}
         />
       </div>
 
