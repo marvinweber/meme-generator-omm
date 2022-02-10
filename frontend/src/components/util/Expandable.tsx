@@ -22,7 +22,7 @@ const Expandable: React.FC<{ heading: string; content: React.ReactNode }> = ({
           className="text-inherit"
         />
       </div>
-      {open ? <div className="border-t mt-2 p-2">{content}</div> : <></>}
+      {open ? <div className="border-t p-2">{content}</div> : <></>}
     </div>
   );
 };
