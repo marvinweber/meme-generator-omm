@@ -11,7 +11,7 @@ const MemeDraftSchema = new mongoose.Schema({
   memeConfig: String,
   createdAt: {
     type: Date,
-    default: new Date(),
+    default: () => new Date(),
   },
 });
 

@@ -9,7 +9,7 @@ const CommentSchema = new mongoose.Schema({
   comment: String,
   posted: {
     type: Date,
-    default: new Date(),
+    default: () => new Date(),
   },
 });
 
@@ -20,7 +20,7 @@ const LikeSchema = new mongoose.Schema({
   },
   liked: {
     type: Date,
-    default: new Date(),
+    default: () => new Date(),
   },
 });
 
@@ -31,7 +31,7 @@ const ViewSchema = new mongoose.Schema({
   },
   date: {
     type: Date,
-    default: new Date(),
+    default: () => new Date(),
   },
 });
 
@@ -58,7 +58,7 @@ const MemeSchema = new mongoose.Schema({
   likes: [LikeSchema],
   createdAt: {
     type: Date,
-    default: new Date(),
+    default: () => new Date(),
   },
   path: String,
   tags: [String],
