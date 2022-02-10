@@ -91,7 +91,7 @@ export function sortingFilterModelToAxiosReqParams(m: SortingFilterModel) {
     model["owner"] = m.filter.user.value;
   }
   if (m.filter.template?.value && m.filter.template.value.length > 0) {
-    model["owner"] = m.filter.template.value;
+    model["template"] = m.filter.template.value;
   }
 
   // add numerical / compare filters
