@@ -1,3 +1,5 @@
+import { mdiArrowDown, mdiArrowLeft, mdiArrowRight, mdiArrowUp, mdiDelete } from "@mdi/js";
+import Icon from "@mdi/react";
 import React from "react";
 import { MemeText } from "../../../../lib/memeConfigInterface";
 
@@ -85,112 +87,117 @@ const MemeEditorTextSetting: React.FC<{
   };
 
   return (
-    <div className="flex flex-col border-b-2 mb-2 pb-1">
+    <div className="flex flex-col border-t mb-2 pt-2">
       <div className="flex justify-between items-end">
         <span className="text-xs">Text {id + 1}:</span>
         <button
           onClick={() => removeText(id)}
           className="px-2 rounded-full border border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
         >
-          x
+          <Icon path={mdiDelete} size={0.8} />
         </button>
       </div>
-      <input
-        type="text"
-        value={text.text}
-        onChange={updateTextString}
-        placeholder="Caption"
-        className="border-2 border-gray-500 rounded-md my-1 p-1"
-      />
-      <div className="flex justify-between">
-        {/* Bold / Italic */}
-        <div className="flex flex-col">
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              checked={text.bold || false}
-              onChange={updateTextBold}
-            />
-            Bold
-          </div>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              checked={text.italic || false}
-              onChange={updateTextItalic}
-            />
-            Italic
+      <div className="flex items-center mt-1">
+        {/* TEXT INPUT AND STYLE */}
+        <div className="flex flex-col flex-grow">
+          <input
+            type="text"
+            value={text.text}
+            onChange={updateTextString}
+            placeholder="Caption"
+            className="border rounded-md p-1"
+          />
+          <div className="flex justify-between items-center">
+            {/* Bold / Italic */}
+            <div className="flex flex-col">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={text.bold || false}
+                  onChange={updateTextBold}
+                />
+                <span className="text-sm ml-1">Bold</span>
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={text.italic || false}
+                  onChange={updateTextItalic}
+                />
+                <span className="text-sm ml-1">Italic</span>
+              </div>
+            </div>
+
+            {/* Font Family */}
+            <div className="flex flex-col">
+              <span className="text-sm">Font Family:</span>
+              <select
+                value={text.fontFamily}
+                onChange={updateFontFamily}
+                className="border rounded-md"
+              >
+                {fontFamilies.map((font) => (
+                  <option key={font}>{font}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Font Color */}
+            <div className="flex flex-col">
+            <span className="text-sm">Color:</span>
+              <input
+                type="color"
+                value={text.color || "#000000"}
+                onChange={updateTextColor}
+              />
+            </div>
+
+            {/* Font Size */}
+            <div className="flex flex-col">
+            <span className="text-sm">Size:</span>
+              <input
+                type="number"
+                style={{ width: "60px" }}
+                min={1}
+                max={10000}
+                value={text.size}
+                onChange={updateTextSize}
+                className="border rounded-md px-1"
+              />
+            </div>
           </div>
         </div>
 
-        {/* Font Family */}
-        <div className="flex flex-col">
-          Font Family:
-          <select
-            value={text.fontFamily}
-            onChange={updateFontFamily}
-            className="border-2 border-gray-500 rounded-md"
+        {/* TEXT MOVEMENT */}
+        <div className="grid grid-cols-2 gap-1 ml-1">
+          <button
+            onClick={() => moveText("UP")}
+            className="w-10 h-10 border border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white rounded-lg
+                       flex justify-center items-center"
           >
-            {fontFamilies.map((font) => (
-              <option key={font}>{font}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Font Color */}
-        <div className="flex flex-col">
-          Color:
-          <input
-            type="color"
-            value={text.color || "#000000"}
-            onChange={updateTextColor}
-          />
-        </div>
-
-        {/* Font Size */}
-        <div className="flex flex-col">
-          Size:
-          <input
-            type="number"
-            style={{ width: "60px" }}
-            min={1}
-            max={10000}
-            value={text.size}
-            onChange={updateTextSize}
-            className="border-2 border-gray-500 rounded-md px-1"
-          />
-        </div>
-
-        {/* Text Movement Controls */}
-        <div className="flex flex-col">
-          <div className="flex">
-            <button
-              onClick={() => moveText("UP")}
-              className="w-7 h-7 border border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white rounded-lg"
-            >
-              ↑
-            </button>
-            <button
-              onClick={() => moveText("DOWN")}
-              className="w-7 h-7 border border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white rounded-lg"
-            >
-              ↓
-            </button>
-          </div>
-          <div className="flex">
-            <button
-              onClick={() => moveText("LEFT")}
-              className="w-7 h-7 border border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white rounded-lg"
-            >
-              ←
-            </button>
-            <button
-              onClick={() => moveText("RIGHT")}
-              className="w-7 h-7 border border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white rounded-lg"
-            >
-              →
-            </button>
-          </div>
+            <Icon path={mdiArrowUp} size={1} />
+          </button>
+          <button
+            onClick={() => moveText("DOWN")}
+            className="w-10 h-10 border border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white rounded-lg
+                       flex justify-center items-center"
+          >
+            <Icon path={mdiArrowDown} size={1} />
+          </button>
+          <button
+            onClick={() => moveText("LEFT")}
+            className="w-10 h-10 border border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white rounded-lg
+                       flex justify-center items-center"
+          >
+            <Icon path={mdiArrowLeft} size={1} />
+          </button>
+          <button
+            onClick={() => moveText("RIGHT")}
+            className="w-10 h-10 border border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white rounded-lg
+                       flex justify-center items-center"
+          >
+            <Icon path={mdiArrowRight} size={1} />
+          </button>
         </div>
       </div>
     </div>

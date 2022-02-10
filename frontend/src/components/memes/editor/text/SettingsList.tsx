@@ -1,3 +1,5 @@
+import { mdiDelete, mdiPlusCircle, mdiTextRecognition } from "@mdi/js";
+import { Icon } from "@mdi/react";
 import React from "react";
 import { MemeText } from "../../../../lib/memeConfigInterface";
 import MemeEditorTextSetting from "./Setting";
@@ -31,25 +33,32 @@ const MemeEditorTextSettingsList: React.FC<{
   };
 
   return (
-    <div className="flex flex-col p-1 w-full">
+    <div className="flex flex-col p-2 w-full shadow-lg rounded-xl">
+      {/* Heading and Add / Clear Buttons */}
       <div className="flex justify-between mb-4">
         <h3 className="text-xl">Meme Captions</h3>
-        <div>
+        <div className="flex">
           <button
-            className="rounded-xl border border-red-600 text-red-600 hover:bg-red-600 hover:text-white px-2 py-1 mr-2"
             onClick={clearTexts}
+            className="p-1 rounded-lg border border-red-700 text-red-700 hover:bg-red-600 
+                     hover:text-white flex items-center justify-center mr-1"
           >
-            Clear Texts
+            <Icon path={mdiDelete} size={0.8} />
+            Texts
           </button>
           <button
-            className="rounded-xl border border-green-800 text-green-800 hover:bg-green-800 hover:text-white px-2 py-1"
             onClick={addText}
+            className="p-1 rounded-lg border border-green-700 text-green-700 hover:bg-green-600 
+                     hover:text-white flex items-center justify-center"
           >
-            Add Text
+            <Icon path={mdiPlusCircle} size={0.8} />
+            Text
           </button>
         </div>
       </div>
-      {texts.map((text, index) => (
+
+      {/* Text Settings List */}
+      {texts.length > 0 ? texts.map((text, index) => (
         <MemeEditorTextSetting
           key={index}
           text={text}
@@ -57,7 +66,12 @@ const MemeEditorTextSettingsList: React.FC<{
           updateText={updateText}
           removeText={removeText}
         />
-      ))}
+      )) : (
+        <div className="flex justify-center mt-10">
+          <Icon path={mdiTextRecognition} size={1} className="mr-1" />
+          No Captions added yet!
+        </div>
+      )}
     </div>
   );
 };

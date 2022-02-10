@@ -1,3 +1,5 @@
+import { mdiImageMultiple } from "@mdi/js";
+import { Icon } from "@mdi/react";
 import { useState } from "react";
 import { MemeConfig } from "../../lib/memeConfigInterface";
 import Expandable from "../util/Expandable";
@@ -26,7 +28,6 @@ export default function MemeEditorPage() {
 
   return (
     <>
-      <h2 className="text-2xl mb-5">Meme Editor</h2>
       <Expandable
         heading="Template Selection"
         content={
@@ -36,7 +37,9 @@ export default function MemeEditorPage() {
           />
         }
       />
-      <hr className="my-2" />
+
+      <hr className="my-5" />
+
       {templateImageUrl ? (
         <MemeEditor
           templateUrl={templateImageUrl}
@@ -45,7 +48,10 @@ export default function MemeEditorPage() {
           setMemeConfig={setMemeConfig}
         />
       ) : (
-        <div>Select a Template to start creating your Meme!</div>
+        <div className="flex justify-center">
+        <Icon path={mdiImageMultiple} size={1} className="mr-1" />
+        <span>Select a template to create a meme.</span>
+      </div>
       )}
     </>
   );

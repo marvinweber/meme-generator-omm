@@ -1,8 +1,18 @@
+import {
+  mdiArchiveEditOutline,
+  mdiContentSaveOutline,
+  mdiDownload,
+  mdiExportVariant,
+  mdiUpload,
+  mdiWeb,
+} from "@mdi/js";
+import Icon from "@mdi/react";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiClient } from "../../..";
 import dataURIToBlob from "../../../lib/dataUriToBlob";
 import { MemeConfig, MemeText } from "../../../lib/memeConfigInterface";
+import TabbedContainer from "../../util/TabbedContainer";
 import MemeEditorTextSettingsList from "./text/SettingsList";
 
 const MemeEditor: React.FC<{
@@ -77,6 +87,7 @@ const MemeEditor: React.FC<{
   };
 
   /**
+   * Generate a image data url from the given canvas element.
    *
    * @param canvas Canvas element to create image from.
    * @param size Maximum target file size in KB (optional).
@@ -116,6 +127,7 @@ const MemeEditor: React.FC<{
     return tags.filter((tag) => !!tag);
   };
 
+  /** Create meme locally and download (no server upload). */
   const createLocalAndDownload = () => {
     const canvas = canvasRef.current;
     if (!canvas) {
@@ -134,6 +146,7 @@ const MemeEditor: React.FC<{
     a.click();
   };
 
+  /** Create meme locally and upload file to server. */
   const createLocalAndPublish = async () => {
     const canvas = canvasRef.current;
     if (!canvas) {
@@ -165,6 +178,7 @@ const MemeEditor: React.FC<{
     }
   };
 
+  /** Send current meme configuration to server for remote creation. */
   const createOnlineAndPublish = async () => {
     const maxFileSize = getOutputMaxFileSize();
 
@@ -206,17 +220,14 @@ const MemeEditor: React.FC<{
     const res = await apiClient.post("/memes/drafts", payload);
     if (res.data.success) {
       alert("Draft has been saved!");
-      setDraftName('');
+      setDraftName("");
     }
   };
 
   return (
     <>
-      <div className="flex items-start flex-col md:flex-row">
-        <canvas
-          ref={canvasRef}
-          className="mb-5 w-1/2 m-1 shadow-lg rounded-md"
-        ></canvas>
+      <div className="grid grid-cols-1 lg:grid-cols-2">
+        <canvas ref={canvasRef} className="shadow-lg rounded-md w-full"></canvas>
         <MemeEditorTextSettingsList
           texts={memeConfig.texts}
           updateTexts={updateMemeTexts}
@@ -224,89 +235,96 @@ const MemeEditor: React.FC<{
         />
       </div>
 
-      <hr className="my-5" />
+      <hr className="my-10" />
 
-      {/* Create / Output Options and Buttons */}
-      <div className="flex flex-col">
-        <h3 className="text-xl">Create Image</h3>
-
-        {/* Output Settings */}
-        <div className="flex-col mt-2 mb-4 p-2 border border-gray-500 rounded">
-          <h4 className="text-lg">Options</h4>
-          <div className="flex flex-col md:flex-row justify-between">
-            <input
-              ref={outputMemeTitle}
-              type="text"
-              placeholder="Meme Title"
-              className="border-2 border-gray-500 rounded-md p-1 flex-grow"
-            />
-            <input
-              ref={outputMemeTags}
-              type="text"
-              placeholder="Tags (whitespace separated)"
-              className="border-2 border-gray-500 rounded-md p-1 flex-grow mx-0 md:mx-1 my-1 md:my-0"
-            />
-            <div className="flex flex-col">
-              <div className="flex items-center">
-                <input ref={outputFileSizeLimitCheckbox} type="checkbox" />
-                <span className="ml-1">Limit File Size:</span>
+      <TabbedContainer
+        titles={["Create & Publish Meme", "Save Draft"]}
+        icons={[mdiExportVariant, mdiArchiveEditOutline]}
+        contents={[
+          // PUBLISH TAB
+          <div className="flex flex-col">
+            {/* Output Settings */}
+            <div className="flex-col mt-2 mb-4 p-2 rounded shadow-md border">
+              <h4 className="text-lg">Download and Publish Options</h4>
+              <div className="flex flex-col md:flex-row justify-between">
+                <input
+                  ref={outputMemeTitle}
+                  type="text"
+                  placeholder="Meme Title"
+                  className="border rounded-md p-1 flex-grow"
+                />
+                <input
+                  ref={outputMemeTags}
+                  type="text"
+                  placeholder="Tags (whitespace separated)"
+                  className="border rounded-md p-1 flex-grow mx-0 md:mx-1 my-1 md:my-0"
+                />
+                <div className="flex items-center border rounded-md">
+                  <input
+                    ref={outputFileSizeLimitCheckbox}
+                    type="checkbox"
+                    className="w-6 h-6"
+                  />
+                  <input
+                    ref={outputFileSizeLimitInput}
+                    type="number"
+                    placeholder="Max Size in KBs"
+                    className="rounded-md p-1"
+                  />
+                </div>
               </div>
-              <input
-                ref={outputFileSizeLimitInput}
-                type="number"
-                placeholder="Max Size in KBs"
-                className="border-2 border-gray-500 rounded-md p-1"
-              />
             </div>
-          </div>
-        </div>
 
-        {/* Download Buttons */}
-        <button
-          onClick={createLocalAndDownload}
-          className="border-2 p-2 mb-2 rounded-md hover:bg-green-600 hover:border-green-600 hover:text-white"
-        >
-          Create Locally &amp; Download (No Publish)
-        </button>
-        <button
-          onClick={createLocalAndPublish}
-          className="border-2 p-2 mb-2 rounded-md hover:bg-green-600 hover:border-green-600 hover:text-white"
-        >
-          Create Locally &amp; Publish
-        </button>
-        <button
-          onClick={createOnlineAndPublish}
-          className="border-2 p-2 mb-2 rounded-md hover:bg-green-600 hover:border-green-600 hover:text-white"
-        >
-          Create Online &amp; Publish
-        </button>
-      </div>
+            {/* Download Buttons */}
+            <div className="grid grid-cols-1 md:grid-cols-3">
+              <button
+                onClick={createLocalAndDownload}
+                className="border-2 p-2 rounded-md hover:bg-green-600 hover:border-green-600 hover:text-white flex items-center justify-center"
+              >
+                <Icon path={mdiDownload} size={1} className="mr-1" />
+                Create Locally &amp; Download (No Publish)
+              </button>
+              <button
+                onClick={createLocalAndPublish}
+                className="border-2 p-2 rounded-md hover:bg-green-600 hover:border-green-600 hover:text-white flex items-center justify-center"
+              >
+                <Icon path={mdiUpload} size={1} className="mr-1" />
+                Create Locally &amp; Publish
+              </button>
+              <button
+                onClick={createOnlineAndPublish}
+                className="border-2 p-2 rounded-md hover:bg-green-600 hover:border-green-600 hover:text-white flex items-center justify-center"
+              >
+                <Icon path={mdiWeb} size={1} className="mr-1" />
+                Create Online &amp; Publish
+              </button>
+            </div>
+          </div>,
 
-      <hr className="my-5" />
+          // DRAFT TAB
+          <div className="flex flex-col">
+            <span className="text-sm">Draft Name</span>
+            <div className="flex">
+              <input
+                value={draftName}
+                onChange={(e) => setDraftName(e.target.value)}
+                placeholder="Draft Name"
+                className="border rounded-md p-1 flex-grow"
+              />
+              <button
+                onClick={saveDraft}
+                className="p-1 rounded-lg border border-blue-500 text-blue-500 hover:bg-blue-400 
+                     hover:text-white flex items-center justify-center"
+              >
+                <Icon path={mdiContentSaveOutline} size={0.8} />
+                Save Draft
+              </button>
+            </div>
+          </div>,
+        ]}
+      />
 
-      {/* Save as Draft */}
-      <div className="flex flex-col">
-        <h3 className="text-xl">Save Draft</h3>
-        <div className="flex">
-          <input
-            value={draftName}
-            onChange={(e) => setDraftName(e.target.value)}
-            placeholder="Draft Name"
-            className="border-2 border-gray-500 rounded-md p-1 flex-grow"
-          />
-          <button
-            onClick={saveDraft}
-            className="border-2 p-2 mb-2 rounded-md hover:bg-green-600 hover:border-green-600
-                     hover:text-white disabled:hover:bg-white disabled:text-gray-300 disabled:hover:text-gray-300
-                     disabled:hover:border-gray-300 disabled:border-gray-300"
-            disabled={memeConfig.texts.length === 0}
-          >
-            Save
-          </button>
-        </div>
-      </div>
-
-      <hr className="my-5" />
+      <hr className="my-10" />
     </>
   );
 };
