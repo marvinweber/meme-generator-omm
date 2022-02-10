@@ -20,7 +20,7 @@ const MemeTemplateSelectorImageUrl: React.FC<{
 
     const uploadResult = await apiClient.post("/templates/upload/url", {
       templateUrl,
-      templateName,
+      name: templateName,
     });
     if (uploadResult.data.success) {
       onNewTemplate(
