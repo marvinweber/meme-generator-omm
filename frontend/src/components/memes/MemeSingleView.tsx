@@ -111,18 +111,31 @@ const MemeSingleView: React.FC<{ memeId: string }> = ({ memeId }) => {
         </div>
       </div>
       <div className="mt-5 flex">
+        {/* Previous Meme Button */}
         <div
-          className="flex items-center pr-2 cursor-pointer"
+          className="flex items-center pr-2 cursor-pointer hover:text-orange-700"
           onClick={previousMeme}
         >
-          <Icon path={mdiArrowLeftCircleOutline} size={1.5} />
+          <Icon
+            path={mdiArrowLeftCircleOutline}
+            size={1.5}
+            className="text-inherit"
+          />
         </div>
+
+        {/* Meme Component */}
         <Meme meme={meme} />
+
+        {/* Next Meme Button */}
         <div
-          className="flex items-center pl-2 cursor-pointer"
+          className="flex items-center pl-2 cursor-pointer hover:text-orange-700"
           onClick={nextMeme}
         >
-          <Icon path={mdiArrowRightCircleOutline} size={1.5} />
+          <Icon
+            path={mdiArrowRightCircleOutline}
+            size={1.5}
+            className="text-inherit"
+          />
         </div>
       </div>
 
