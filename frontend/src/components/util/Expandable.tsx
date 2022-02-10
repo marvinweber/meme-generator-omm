@@ -28,7 +28,7 @@ const Expandable: React.FC<{ heading: string; content: React.ReactNode }> = ({
           </div>
         </button>
       </div>
-      {open ? <div className="border-t-2 mt-2 p-2">{content}</div> : <></>}
+      {open ? <div className="border-t mt-2 p-2">{content}</div> : <></>}
     </div>
   );
 };
