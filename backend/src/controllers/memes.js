@@ -431,7 +431,7 @@ export const getMemeStats = async (req, res) => {
   }
 
   const startDate = moment(meme.createdAt);
-  const endDate = moment.now();
+  const endDate = moment(moment.now()).hour(23).minute(59).second(59);
 
   const viewsPerDay = countArrayOccurances(
     meme.views.map((v) => moment(v.date).format('YYYY-MM-DD'))
@@ -519,6 +519,6 @@ function fillMissingDates(start, end, dateStatsObj, fillWith = 0) {
       ? dateStatsObj[dateStr]
       : fillWith;
     date.add(1, 'day');
-  } while (date.isBefore(end));
+  } while (date.isSameOrBefore(end));
   return obj;
 }

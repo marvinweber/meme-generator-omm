@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { MemeModel } from "../../../lib/memeModel";
 import {
   Chart as ChartJS,
+  CategoryScale,
+  PointElement,
   LinearScale,
   LineElement,
   Title,
@@ -14,8 +16,10 @@ import Icon from "@mdi/react";
 import { mdiChartBox, mdiRefreshCircle } from "@mdi/js";
 
 ChartJS.register(
+  CategoryScale,
   LinearScale,
   LineElement,
+  PointElement,
   Title,
   Tooltip,
   Legend
