@@ -114,7 +114,7 @@ const MemeOverview = () => {
             {loading ? (
               <div className="flex justify-center">
                 <Icon path={mdiLoading} size={1} spin={true} />
-                <span>You have reached the end!</span>
+                <span>Loading more Memes...</span>
               </div>
             ) : (
               <></>
