@@ -492,7 +492,6 @@ export const getMemeStats = async (req, res) => {
     likesCummulated,
     comments,
     commentsCummulated,
-    meme,
   });
 };
 
