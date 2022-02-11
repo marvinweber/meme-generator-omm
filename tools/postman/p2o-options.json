@@ -1,0 +1,13 @@
+{
+  "info": {
+    "title": "OMM Meme Generator Backend",
+    "version": "1.0.0",
+    "description": "API Specification of the OMM Meme Generator Backend"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3050",
+      "description": "Local Development Backend Server"
+    }
+  ]
+}

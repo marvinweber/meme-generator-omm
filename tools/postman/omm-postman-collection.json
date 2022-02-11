@@ -1,0 +1,885 @@
+{
+	"info": {
+		"_postman_id": "a86aa257-561e-4951-93f4-259d545c5eca",
+		"name": "OMM Meme",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Get logged-in User (Me)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/auth/me",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						},
+						"description": "Endpoint to get information about the currently logged-in user. Authentication required, of course."
+					},
+					"response": []
+				},
+				{
+					"name": "Register with E-Mail and Password",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Darth Vader\",\r\n    \"email\": \"darth@vader.com\",\r\n    \"password\": \"1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiUrl}}/auth/register",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "Create a new account for given name, email, and password."
+					},
+					"response": []
+				},
+				{
+					"name": "Login with E-Mail and Password",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"marvin@marvinweber.net\",\r\n    \"password\": \"1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiUrl}}/auth/login",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login and create/request a JWT Token for email and password."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Memes",
+			"item": [
+				{
+					"name": "Create/Delete Meme",
+					"item": [
+						{
+							"name": "Create Meme by File Upload",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "meme",
+											"description": "Meme-Image to Upload",
+											"type": "file",
+											"src": "/D:/Downloads/meme-example-templates/zeichentrick-typ.jpeg"
+										},
+										{
+											"key": "name",
+											"value": "Meme Name",
+											"description": "Name / Title of the Meme",
+											"type": "text"
+										},
+										{
+											"key": "tags",
+											"value": "[\"tag1\",\"tag2\"]",
+											"description": "Tags for the Meme (\"JSON stringified array\")",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "captions",
+											"value": "[\"some caption text\",\"another caption\"]",
+											"description": "Captions of the Meme (\"JSON stringified array\")",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "template",
+											"value": "",
+											"description": "ID of the template used (if known)",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{apiUrl}}/memes/file",
+									"host": [
+										"{{apiUrl}}"
+									],
+									"path": [
+										"memes",
+										"file"
+									]
+								},
+								"description": "Create a new Meme by uploading the Meme image file.\n\nAdditional info may be provided in the Request body:\n\n*   Name (string): Title/Name of the Meme\n*   Tags & Captions (JSON stringified Lists/Arrays): List of Tags and the Captions of the Meme\n*   Template (string/ objectId): The id of the template, if known (can be ommitted)"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Meme by Config",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"memeConfigs\": [\r\n        {\r\n            \"templateId\": \"61f70d9c6378875975653b4f\",\r\n            \"maxFileSize\": 50,\r\n            \"title\": \"A new meme, no idea for a title!\",\r\n            \"tags\": [\"tag1\", \"meme\", \"dog\"],\r\n            \"texts\": [\r\n                {\r\n                    \"text\": \"First caption in red!\",\r\n                    \"xPos\": 80,\r\n                    \"yPos\": 50,\r\n                    \"size\": 50,\r\n                    \"italic\": true,\r\n                    \"color\": \"red\"\r\n                },\r\n                {\r\n                    \"text\": \"CAPTION 2!\",\r\n                    \"fontFamily\": \"Comic Sans MS\",\r\n                    \"xPos\": 190,\r\n                    \"yPos\": 350,\r\n                    \"size\": 80,\r\n                    \"bold\": true,\r\n                    \"color\": \"#4ec9b0\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"templateUrl\": \"https://i2.pickpik.com/photos/600/698/553/cat-winter-cold-snow-preview.jpg\",\r\n            \"title\": \"Funny Cat!\",\r\n            \"tags\": [\"tag1\", \"meme\", \"cat\"],\r\n            \"texts\": [\r\n                {\r\n                    \"text\": \"Hi\",\r\n                    \"xPos\": 300,\r\n                    \"yPos\": 70,\r\n                    \"size\": 50,\r\n                    \"italic\": true,\r\n                    \"color\": \"red\"\r\n                },\r\n                {\r\n                    \"text\": \"I AM A CAT!\",\r\n                    \"fontFamily\": \"Comic Sans MS\",\r\n                    \"xPos\": 200,\r\n                    \"yPos\": 400,\r\n                    \"size\": 80,\r\n                    \"bold\": true,\r\n                    \"color\": \"#4ec9b0\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{apiUrl}}/memes/config",
+									"host": [
+										"{{apiUrl}}"
+									],
+									"path": [
+										"memes",
+										"config"
+									]
+								},
+								"description": "Create a new Meme by uploading the Meme configuration.\n\nBody (JSON formatted) goes as follows:\n\n``` json\n{\n    \"memeConfigs\": [\n        {\n            \"templateId\": \"61f70d9c6378875975653b4f\", // define template ID (no meme will be created, if id does not exist)\n            \"maxFileSize\": 50, // optional: specify maximum filesize in KBs\n            \"title\": \"A new meme, no idea for a title!\", // a title for the meme\n            \"tags\": [\"tag1\", \"meme\", \"dog\"], // optional: add some tags\n            \"texts\": [ // your captions (only text is obligatory, rest is optional)\n                {\n                    \"text\": \"First caption in red!\",\n                    \"xPos\": 80,\n                    \"yPos\": 50,\n                    \"size\": 50,\n                    \"italic\": true,\n                    \"color\": \"red\"\n                },\n                {\n                    \"text\": \"CAPTION 2!\",\n                    \"fontFamily\": \"Comic Sans MS\",\n                    \"xPos\": 190,\n                    \"yPos\": 350,\n                    \"size\": 80,\n                    \"bold\": true,\n                    \"color\": \"#4ec9b0\"\n                }\n            ]\n        },\n        {\n            \"templateUrl\": \"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Hauskatze_langhaar.jpg/1280px-Hauskatze_langhaar.jpg\", // instead of Template ID: you may also just provide a image url\n            \"title\": \"Funny Cat!\", // a title for the meme\n            \"tags\": [\"tag1\", \"meme\", \"cat\"], // optional: add some tags\n            \"texts\": [ // your captions (only text is obligatory, rest is optional)\n                {\n                    \"text\": \"Hi\",\n                    \"xPos\": 300,\n                    \"yPos\": 70,\n                    \"size\": 50,\n                    \"italic\": true,\n                    \"color\": \"red\"\n                },\n                {\n                    \"text\": \"I AM A CAT!\",\n                    \"fontFamily\": \"Comic Sans MS\",\n                    \"xPos\": 300,\n                    \"yPos\": 800,\n                    \"size\": 80,\n                    \"bold\": true,\n                    \"color\": \"#4ec9b0\"\n                }\n            ]\n        }\n    ]\n}\n\n```\n\nOne entry in the memeConfigs for every meme to create.\n\n### Font Families\n\nThe following font families should be supported:\n\n*   Arial\n*   Brush Script MT\n*   Cambria\n*   Comic Sans MS\n*   Courier New\n*   Garamond\n*   Georgia\n*   Helvetica\n*   Tahoma\n*   Trebuchet MS\n*   Verdana\n    \n\n### Colors\n\nColors can either be given by canoncial names (e.g., \"red\", \"blue\", ...), or by their HEX code (e.g.; \"#1234f1\").\n\n### Size of the Meme\n\nThe size of the meme is defined by the image size of the template."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete a Meme",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrl}}/memes/:memeId",
+									"host": [
+										"{{apiUrl}}"
+									],
+									"path": [
+										"memes",
+										":memeId"
+									],
+									"variable": [
+										{
+											"key": "memeId",
+											"value": "61fda196b28569ee2f595f34"
+										}
+									]
+								},
+								"description": "Delete the specified meme. This is only allowed for memes uploaded/ created by the authenticated user."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Retrieve Memes and Meme Info",
+					"item": [
+						{
+							"name": "Get all Memes",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrl}}/memes/?p=1&perPage=10&sort[createdAt]=desc&sort[viewCount]=desc",
+									"host": [
+										"{{apiUrl}}"
+									],
+									"path": [
+										"memes",
+										""
+									],
+									"query": [
+										{
+											"key": "p",
+											"value": "1",
+											"description": "Page to get (defaults to first page)"
+										},
+										{
+											"key": "perPage",
+											"value": "10",
+											"description": "Memes to get per page (defaults to 30)"
+										},
+										{
+											"key": "sort[createdAt]",
+											"value": "desc",
+											"description": "Sort by de date of creation."
+										},
+										{
+											"key": "sort[viewCount]",
+											"value": "desc",
+											"description": "Sort by the view count."
+										},
+										{
+											"key": "sort[commentCount]",
+											"value": "asc",
+											"description": "Sort by the comment count.",
+											"disabled": true
+										},
+										{
+											"key": "sort[likeCount]",
+											"value": "asc",
+											"description": "Sort by the like count.",
+											"disabled": true
+										},
+										{
+											"key": "commentCount[$lte]",
+											"value": "0",
+											"description": "Filter by the comment count ($lt, $lte, $gte, $gt).",
+											"disabled": true
+										},
+										{
+											"key": "viewCount[$gte]",
+											"value": "10",
+											"description": "Filter by the view count ($lt, $lte, $gte, $gt).",
+											"disabled": true
+										},
+										{
+											"key": "title",
+											"value": "Funny Cat",
+											"description": "Filter by any text in the title.",
+											"disabled": true
+										},
+										{
+											"key": "tags",
+											"value": "cat",
+											"description": "Filter by tag, separate tags by whitespace.",
+											"disabled": true
+										},
+										{
+											"key": "captions",
+											"value": "I am a cat!",
+											"description": "Filter by text in one of the captions.",
+											"disabled": true
+										},
+										{
+											"key": "createdAt[$gt]",
+											"value": "2022-02-02 12:15:10",
+											"description": "Filter by the date of creation ($lt, $lte, $gte, $gt).",
+											"disabled": true
+										},
+										{
+											"key": "owner",
+											"value": "Maxi Maier",
+											"description": "Search for memes uploaded by a user whose name includes the search string.",
+											"disabled": true
+										},
+										{
+											"key": "template",
+											"value": "Cat Template",
+											"description": "Search for memes that used a template whose name includes the search string.",
+											"disabled": true
+										},
+										{
+											"key": "likeCount[$lt]",
+											"value": "4",
+											"disabled": true
+										}
+									]
+								},
+								"description": "Get a list of memes.\n\nSorting by the following fields is supported:\n\n*   createdAt\n*   viewCount\n*   commentCount\n*   likeCount\n    \n\nFiltering for title, tags, captions can be done by providing one or more strings to search for in the respective fields.\n\nFilter by Template and Owner (user uploaded the meme) is done by providing a search string which is search in the name of the template/user. Only memes made from templates/ users whose name includes the search string are returned.\n\nNumerical filtering supported for:\n\n*   viewCount\n*   likeCount\n*   commentCount\n    \n\nSupported operation for numerical filters (and the createdAt filter):\n\n*   $lt: lower than\n*   $tle: lower, or equal than\n*   $gte: greater, or equal than\n*   $gt: greater than\n    \n\nSee example for how to send the filters."
+							},
+							"response": []
+						},
+						{
+							"name": "Get specific Meme",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrl}}/memes/:memeId/?countView=true",
+									"host": [
+										"{{apiUrl}}"
+									],
+									"path": [
+										"memes",
+										":memeId",
+										""
+									],
+									"query": [
+										{
+											"key": "countView",
+											"value": "true",
+											"description": "Parameter to control whether the call should be counted as view. (must be \"true\" to be considered set)"
+										}
+									],
+									"variable": [
+										{
+											"key": "memeId",
+											"value": "61f70b696c190d7f30a03d96",
+											"description": "ID of the Meme to retrieve information/data for (comments, likes, etc.)"
+										}
+									]
+								},
+								"description": "Get details about one specific Meme."
+							},
+							"response": []
+						},
+						{
+							"name": "Get Previous Meme",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrl}}/memes/:memeId/previous",
+									"host": [
+										"{{apiUrl}}"
+									],
+									"path": [
+										"memes",
+										":memeId",
+										"previous"
+									],
+									"variable": [
+										{
+											"key": "memeId",
+											"value": "61faab34bfb44a016fb31761",
+											"description": "ID of the Meme to get the PREVIOUS Meme for."
+										}
+									]
+								},
+								"description": "Get the previous (wrt. upload time) meme of the specified one."
+							},
+							"response": []
+						},
+						{
+							"name": "Get Next Meme",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrl}}/memes/:memeId/next",
+									"host": [
+										"{{apiUrl}}"
+									],
+									"path": [
+										"memes",
+										":memeId",
+										"next"
+									],
+									"variable": [
+										{
+											"key": "memeId",
+											"value": "61faab34bfb44a016fb31761",
+											"description": "ID of the Meme to get the NEXT Meme for."
+										}
+									]
+								},
+								"description": "Get the previous (wrt. upload time) meme of the specified one."
+							},
+							"response": []
+						},
+						{
+							"name": "Get random Meme",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrl}}/memes/random",
+									"host": [
+										"{{apiUrl}}"
+									],
+									"path": [
+										"memes",
+										"random"
+									]
+								},
+								"description": "Get a random Meme from all Memes."
+							},
+							"response": []
+						},
+						{
+							"name": "Get Meme Stats",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrl}}/memes/:memeId/stats",
+									"host": [
+										"{{apiUrl}}"
+									],
+									"path": [
+										"memes",
+										":memeId",
+										"stats"
+									],
+									"variable": [
+										{
+											"key": "memeId",
+											"value": "61fff5be6950e5daaf81cd3e",
+											"description": "ID of the Meme to retrieve stats for."
+										}
+									]
+								},
+								"description": "Get statistics (over time) for given meme (id).\n\nStatistics include:\n\n*   View, Likes, Comments per Day\n*   Cummulated Views, Likes, Comment Count"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Meme Drafts",
+					"item": [
+						{
+							"name": "Create a Meme Draft",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"My Draft\",\r\n    \"templateUrl\": \"url to the template\",\r\n    \"templateId\": \"id of the template used\",\r\n    \"memeConfig\": \"{\\\"texts\\\":[{\\\"text\\\":\\\"New Text\\\",\\\"size\\\":80,\\\"xPos\\\":3,\\\"yPos\\\":80,\\\"fontFamily\\\":\\\"Arial\\\"}]}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{apiUrl}}/memes/drafts",
+									"host": [
+										"{{apiUrl}}"
+									],
+									"path": [
+										"memes",
+										"drafts"
+									]
+								},
+								"description": "Create and Save a new Meme Draft for the authenticated user. The memeConfig must be a \"json-stringified\" object implementing the MemeConfig Schema / Interface of the Frontend."
+							},
+							"response": []
+						},
+						{
+							"name": "Get Meme Drafts",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrl}}/memes/drafts",
+									"host": [
+										"{{apiUrl}}"
+									],
+									"path": [
+										"memes",
+										"drafts"
+									]
+								},
+								"description": "Get Meme Drafts of the authenticated user."
+							},
+							"response": []
+						},
+						{
+							"name": "Create a Meme Draft Copy",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrl}}/memes/drafts/:draftId",
+									"host": [
+										"{{apiUrl}}"
+									],
+									"path": [
+										"memes",
+										"drafts",
+										":draftId"
+									],
+									"variable": [
+										{
+											"key": "draftId",
+											"value": "6204da5dad579efb9f3c04ed",
+											"description": "ID of the draft to delete."
+										}
+									]
+								},
+								"description": "Delete a Meme draft. This only is allowed for meme drafts created by the authenticated user."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Meme Interactions",
+					"item": [
+						{
+							"name": "Comment on Meme",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"comment\": \"Here goes the nice comment!\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{apiUrl}}/memes/:memeId/comment",
+									"host": [
+										"{{apiUrl}}"
+									],
+									"path": [
+										"memes",
+										":memeId",
+										"comment"
+									],
+									"variable": [
+										{
+											"key": "memeId",
+											"value": "61f70b696c190d7f30a03d96",
+											"description": "ID of the Meme to post a comment to."
+										}
+									]
+								},
+								"description": "Create a new comment on the specified meme."
+							},
+							"response": []
+						},
+						{
+							"name": "Like a Meme",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrl}}/memes/:memeId/like",
+									"host": [
+										"{{apiUrl}}"
+									],
+									"path": [
+										"memes",
+										":memeId",
+										"like"
+									],
+									"variable": [
+										{
+											"key": "memeId",
+											"value": "61fda196b28569ee2f595f34",
+											"description": "ID of the Meme to like."
+										}
+									]
+								},
+								"description": "Like the specified meme. If the user has liked the meme already before, this call has no effect."
+							},
+							"response": []
+						},
+						{
+							"name": "Unlike a Meme",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrl}}/memes/:memeId/unlike",
+									"host": [
+										"{{apiUrl}}"
+									],
+									"path": [
+										"memes",
+										":memeId",
+										"unlike"
+									],
+									"variable": [
+										{
+											"key": "memeId",
+											"value": "61f70b696c190d7f30a03d96",
+											"description": "ID of the meme to unlike."
+										}
+									]
+								},
+								"description": "Unlike the specified meme. If the user has not liked the meme before, this call has no effect."
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Templates",
+			"item": [
+				{
+					"name": "Create Template by File Upload",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "template",
+									"description": "Template Image File.",
+									"type": "file",
+									"src": "/D:/Downloads/meme-example-templates/zeichentrick-typ.jpeg"
+								},
+								{
+									"key": "name",
+									"value": "Template Name",
+									"description": "Name of the Template.",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/templates/upload/file",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"templates",
+								"upload",
+								"file"
+							]
+						},
+						"description": "Upload a new Template Image that can be used for creating memes."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Template from Image URL",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"templateUrl\": \"https://picfiles.alphacoders.com/311/311202.jpg\",\r\n    \"name\": \"Ein Katzentemplate!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiUrl}}/templates/upload/url",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"templates",
+								"upload",
+								"url"
+							]
+						},
+						"description": "Upload/Create new Template by provding an image url from where it can be downloaded. The downloaded Template can be used for new Memes, afterwards.\n\nWithin the JSON-Body, provide the `templateUrl` (URL from where to download the Image), and optionally a `name` for the Template (see example request)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get all Templates",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/templates",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"templates"
+							]
+						},
+						"description": "Get a list of all available templates."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a Template",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/templates/:templateId",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"templates",
+								":templateId"
+							],
+							"variable": [
+								{
+									"key": "templateId",
+									"value": "6204da5dad579efb9f3c04ed",
+									"description": "ID of the Template to delete."
+								}
+							]
+						},
+						"description": "Delete the specified template. This is only allowed for templates uploaded by the authenticated user."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get User Memes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/user/memes",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"user",
+								"memes"
+							]
+						},
+						"description": "Get a list of all memes created by the authenticated user."
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Templates",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/user/templates",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"user",
+								"templates"
+							]
+						},
+						"description": "Get a list of all templates uploaded by the authenticated user."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwtToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "apiUrl",
+			"value": "http://localhost:3050",
+			"type": "string"
+		},
+		{
+			"key": "jwtToken",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
