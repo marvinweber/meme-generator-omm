@@ -100,6 +100,16 @@ const OverviewFilters: React.FC<{
     setFilterModel(newFilter);
   };
 
+  /** Upate filter if a keyboard event was caused by an Enter click. */
+  const onEnterPress = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    clb: CallableFunction
+  ) => {
+    if (e.code === "Enter") {
+      clb();
+    }
+  };
+
   return (
     <div className="flex flex-col">
       {/* SEARCH */}
@@ -121,52 +131,102 @@ const OverviewFilters: React.FC<{
         <span className="text-xs text-right font-extralight text-gray-600">
           Meme Title
         </span>
-        <input
-          placeholder="Meme Title"
-          className="border-2 rounded-lg p-2 mb-1"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
+        <div className="flex items-center">
+          <input
+            placeholder="Meme Title"
+            className="border-2 rounded-lg p-2 mb-1 flex-grow"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            onKeyPress={(e) => onEnterPress(e, updateSearch)}
+          />
+          <button onClick={() => setTitle("")}>
+            <Icon
+              path={mdiCloseBoxOutline}
+              size={1}
+              className="text-slate-700 hover:text-red-700"
+            />
+          </button>
+        </div>
 
         <span className="text-xs text-right font-extralight text-gray-600">
           Captions
         </span>
-        <input
-          placeholder="Captions"
-          className="border-2 rounded-lg p-2 mb-1"
-          value={captions}
-          onChange={(e) => setCaptions(e.target.value)}
-        />
+        <div className="flex items-center">
+          <input
+            placeholder="Captions"
+            className="border-2 rounded-lg p-2 mb-1 flex-grow"
+            value={captions}
+            onChange={(e) => setCaptions(e.target.value)}
+            onKeyPress={(e) => onEnterPress(e, updateSearch)}
+          />
+          <button onClick={() => setCaptions("")}>
+            <Icon
+              path={mdiCloseBoxOutline}
+              size={1}
+              className="text-slate-700 hover:text-red-700"
+            />
+          </button>
+        </div>
 
         <span className="text-xs text-right font-extralight text-gray-600">
           Tags
         </span>
-        <input
-          placeholder="Tags"
-          className="border-2 rounded-lg p-2 mb-1"
-          value={tags}
-          onChange={(e) => setTags(e.target.value)}
-        />
+        <div className="flex items-center">
+          <input
+            placeholder="Tags"
+            className="border-2 rounded-lg p-2 mb-1 flex-grow"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            onKeyPress={(e) => onEnterPress(e, updateSearch)}
+          />
+          <button onClick={() => setTags("")}>
+            <Icon
+              path={mdiCloseBoxOutline}
+              size={1}
+              className="text-slate-700 hover:text-red-700"
+            />
+          </button>
+        </div>
 
         <span className="text-xs text-right font-extralight text-gray-600">
           User
         </span>
-        <input
-          placeholder="User"
-          className="border-2 rounded-lg p-2 mb-1"
-          value={user}
-          onChange={(e) => setUser(e.target.value)}
-        />
+        <div className="flex items-center">
+          <input
+            placeholder="User"
+            className="border-2 rounded-lg p-2 mb-1 flex-grow"
+            value={user}
+            onChange={(e) => setUser(e.target.value)}
+            onKeyPress={(e) => onEnterPress(e, updateSearch)}
+          />
+          <button onClick={() => setUser("")}>
+            <Icon
+              path={mdiCloseBoxOutline}
+              size={1}
+              className="text-slate-700 hover:text-red-700"
+            />
+          </button>
+        </div>
 
         <span className="text-xs text-right font-extralight text-gray-600">
           Template Name
         </span>
-        <input
-          placeholder="Template Name"
-          className="border-2 rounded-lg p-2 mb-1"
-          value={template}
-          onChange={(e) => setTemplate(e.target.value)}
-        />
+        <div className="flex items-center">
+          <input
+            placeholder="Template Name"
+            className="border-2 rounded-lg p-2 mb-1 flex-grow"
+            value={template}
+            onChange={(e) => setTemplate(e.target.value)}
+            onKeyPress={(e) => onEnterPress(e, updateSearch)}
+          />
+          <button onClick={() => setTemplate("")}>
+            <Icon
+              path={mdiCloseBoxOutline}
+              size={1}
+              className="text-slate-700 hover:text-red-700"
+            />
+          </button>
+        </div>
       </div>
 
       {/* FILTERS */}
@@ -185,6 +245,7 @@ const OverviewFilters: React.FC<{
         </div>
       </div>
       <div className="flex flex-col mt-2">
+        {/* Date + Time */}
         <span className="text-xs font-extralight text-gray-600">
           Creation Date
         </span>
@@ -199,16 +260,24 @@ const OverviewFilters: React.FC<{
           </select>
           <input
             type="datetime-local"
-            className="border-2 rounded-lg p-2 mb-1 w-100"
+            className="border-2 rounded-lg p-2 mb-1 flex-grow"
             placeholder="views"
             value={date}
-            onChange={(e) => setDate(e.target.value)}
+            onChange={(e) => {
+              setDate(e.target.value);
+              updateFilters();
+            }}
           />
           <button onClick={() => setDate("")}>
-            <Icon path={mdiCloseBoxOutline} size={1.7} color="gray" />
+            <Icon
+              path={mdiCloseBoxOutline}
+              size={1}
+              className="text-slate-700 hover:text-red-700"
+            />
           </button>
         </div>
 
+        {/* Views */}
         <span className="text-xs font-extralight text-gray-600">Views</span>
         <div className="flex justify-between">
           <select
@@ -221,16 +290,22 @@ const OverviewFilters: React.FC<{
           </select>
           <input
             type="number"
-            className="border-2 rounded-lg p-2 mb-1"
+            className="border-2 rounded-lg p-2 mb-1 flex-grow"
             placeholder="views"
             value={views}
             onChange={(e) => setViews(e.target.value)}
+            onKeyPress={(e) => onEnterPress(e, updateFilters)}
           />
           <button onClick={() => setViews("")}>
-            <Icon path={mdiCloseBoxOutline} size={1.7} color="gray" />
+            <Icon
+              path={mdiCloseBoxOutline}
+              size={1}
+              className="text-slate-700 hover:text-red-700"
+            />
           </button>
         </div>
 
+        {/* Likes */}
         <span className="text-xs font-extralight text-gray-600">Likes</span>
         <div className="flex justify-between">
           <select
@@ -243,16 +318,22 @@ const OverviewFilters: React.FC<{
           </select>
           <input
             type="number"
-            className="border-2 rounded-lg p-2 mb-1"
+            className="border-2 rounded-lg p-2 mb-1 flex-grow"
             placeholder="likes"
             value={likes}
             onChange={(e) => setLikes(e.target.value)}
+            onKeyPress={(e) => onEnterPress(e, updateFilters)}
           />
           <button onClick={() => setLikes("")}>
-            <Icon path={mdiCloseBoxOutline} size={1.7} color="gray" />
+            <Icon
+              path={mdiCloseBoxOutline}
+              size={1}
+              className="text-slate-700 hover:text-red-700"
+            />
           </button>
         </div>
 
+        {/* Comments */}
         <span className="text-xs font-extralight text-gray-600">Comments</span>
         <div className="flex justify-between">
           <select
@@ -265,13 +346,23 @@ const OverviewFilters: React.FC<{
           </select>
           <input
             type="number"
-            className="border-2 rounded-lg p-2 mb-1"
+            className="border-2 rounded-lg p-2 mb-1 flex-grow"
             placeholder="comments"
             value={comments}
             onChange={(e) => setComments(e.target.value)}
+            onKeyPress={(e) => onEnterPress(e, updateFilters)}
           />
-          <button onClick={() => setComments("")}>
-            <Icon path={mdiCloseBoxOutline} size={1.7} color="gray" />
+          <button
+            onClick={() => {
+              setComments("");
+              updateFilters();
+            }}
+          >
+            <Icon
+              path={mdiCloseBoxOutline}
+              size={1}
+              className="text-slate-700 hover:text-red-700"
+            />
           </button>
         </div>
       </div>
