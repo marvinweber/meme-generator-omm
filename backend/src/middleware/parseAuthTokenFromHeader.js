@@ -1,6 +1,8 @@
 import { request, response } from 'express';
 import { OAuth2Client } from 'google-auth-library';
 import jwt_decode from 'jwt-decode';
+import crypto from 'crypto';
+import { jwtVerify } from 'jose';
 import User from '../models/user.js';
 
 const GOOGLE_APP_CLIENT_ID = process.env.GOOGLE_APP_CLIENT_ID;
@@ -34,7 +36,8 @@ export default async function parseAuthTokenFromHeader(req, res, next) {
         // no other login types (than Bearer Token / JWT) supported yet
         break;
     }
-  } catch {} finally {
+  } catch {
+  } finally {
     if (authenticated) {
       req.authenticated = true;
       req.user = user;
@@ -64,9 +67,32 @@ async function verifyBearerToken(token) {
   switch (tokenIssuer) {
     case 'accounts.google.com':
       return await verifyGoogleAuthToken(token);
+    case process.env.JWT_ISSUER:
+      return await verifyOMMJwtAuthToken(token);
     default:
       // no other login types supported, currently
       return [false, null];
+  }
+}
+
+/**
+ * Verify a given JWT Token that has been issued by this application.
+ *
+ * @param {string} token JWT token provided by the user.
+ * @returns [ authenticated, userObject ]
+ */
+async function verifyOMMJwtAuthToken(token) {
+  try {
+    const secretKey = crypto.createSecretKey(process.env.JWT_SECRET);
+    // this throws an exception when token is invalid
+    const { payload, protectedHeader } = await jwtVerify(token, secretKey, {
+      issuer: process.env.JWT_ISSUER,
+    });
+
+    const usr = await User.findById(payload._id);
+    return !!usr ? [true, usr] : [false, null];
+  } catch {
+    return [false, null];
   }
 }
 
