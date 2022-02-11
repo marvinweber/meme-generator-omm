@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import { ROOT_DIR } from '../app.js';
 import moment from 'moment';
 import Meme from '../models/meme.js';
@@ -8,6 +7,7 @@ import { generateMeme } from '../lib/memeGenerator.js';
 import crypto from 'crypto';
 import fs from 'fs';
 import User from '../models/user.js';
+import escapeRegExChars from '../lib/regexEscaper.js';
 
 /** Field allowed to sort by. */
 const SORT_ALLOWED_FIELDS = [
@@ -26,6 +26,11 @@ const NUMERIC_FILTERS_ALLOWED_OPS = ['$lt', '$lte', '$gte', '$gt'];
 
 /** Fields with list filters (i.e., check multiple sub strings). */
 const LIST_FILTERS = ['title', 'captions', 'tags'];
+/** Fields where to split filtered value by whitespace and search for each
+ *  substring in any of the fields (e.g. search for different tags, but a
+ *  caption should not be split, as you want the searched string to be in
+ *  any of the captions entirely. */
+const LIST_FILTERS_SPLIT = ['title', 'tags'];
 
 export const getMemes = async (req, res) => {
   // pagination
@@ -59,10 +64,16 @@ export const getMemes = async (req, res) => {
   // list filters
   LIST_FILTERS.forEach((filterKey) => {
     if (req.query[filterKey]) {
-      const filterVals = req.query[filterKey].split(' ');
-      filters[filterKey] = { $in: filterVals.map((v) => new RegExp(v, 'i')) };
+      const filterVals = LIST_FILTERS_SPLIT.includes(filterKey)
+        ? req.query[filterKey].split(' ')
+        : [req.query[filterKey]];
+      filters[filterKey] = {
+        $in: filterVals.map((v) => new RegExp(escapeRegExChars(v), 'i')),
+      };
     }
   });
+
+  console.log(filters);
 
   // date / createdAt filter
   if (req.query.createdAt) {
@@ -78,7 +89,9 @@ export const getMemes = async (req, res) => {
     const filterVals = req.query.template.split(' ');
     const templates = (
       await Template.find({
-        name: { $in: filterVals.map((v) => new RegExp(v, 'i')) },
+        name: {
+          $in: filterVals.map((v) => new RegExp(escapeRegExChars(v), 'i')),
+        },
       }).select('_id')
     ).map((t) => t._id);
     filters['template'] = { $in: templates };
@@ -89,7 +102,9 @@ export const getMemes = async (req, res) => {
     const filterVals = req.query.owner.split(' ');
     const owners = (
       await User.find({
-        name: { $in: filterVals.map((v) => new RegExp(v, 'i')) },
+        name: {
+          $in: filterVals.map((v) => new RegExp(escapeRegExChars(v), 'i')),
+        },
       }).select('_id')
     ).map((u) => u._id);
     filters['owner'] = { $in: owners };
