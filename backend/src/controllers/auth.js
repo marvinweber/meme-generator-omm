@@ -2,8 +2,8 @@ import crypto from 'crypto';
 import { SignJWT } from 'jose';
 import User from '../models/user.js';
 
-/* Endpoint to verify succesfull oauth login for clients. */
-export const oAuthLogin = (req, res) => {
+/* Get Endpoint for retrieving the currently logged-in user. */
+export const getUser = (req, res) => {
   res.json({
     success: true,
     user: req.user,

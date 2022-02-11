@@ -25,7 +25,7 @@ const GoogleAuthButton: React.FC<{ text?: string }> = ({ text }) => {
 
     // set axios default values and make login request to backend
     apiClient.defaults.headers.common["Authorization"] = `Bearer ${idToken}`;
-    const loginResult = await apiClient.get("/auth/oauth/login");
+    const loginResult = await apiClient.get("/auth/me");
     if (loginResult.data.success) {
       dispatch(
         login({
