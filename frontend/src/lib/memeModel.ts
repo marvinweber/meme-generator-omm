@@ -15,6 +15,9 @@ export interface MemeModel {
     profilePicUrl: string;
   };
   url: string;
+  template?: {
+    name?: string;
+  }
 }
 
 export interface MemeComment {

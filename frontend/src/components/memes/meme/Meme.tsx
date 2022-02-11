@@ -3,6 +3,7 @@ import {
   mdiCounter,
   mdiDownload,
   mdiHeart,
+  mdiImageFrame,
   mdiShareVariant,
   mdiTextToSpeech,
 } from "@mdi/js";
@@ -110,7 +111,17 @@ const Meme: React.FC<{
           />
         </button>
       </div>
-      <div>{meme.tags.map((m) => `#${m}`).join(" ")}</div>
+      <div className="flex justify-between items-center">
+        <div>{meme.tags.map((m) => `#${m}`).join(" ")}</div>
+        {meme?.template?.name ? (
+          <div className="flex items-center text-slate-600" title="Template">
+            <span className="text-xs mr-1">{meme?.template?.name}</span>
+            <Icon path={mdiImageFrame} size={0.8} />
+          </div>
+        ) : (
+          <></>
+        )}
+      </div>
       <div className="mt-2">
         <NavLink to={`/memes/${meme.id}`}>
           <img
