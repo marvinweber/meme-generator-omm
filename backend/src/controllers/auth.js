@@ -61,7 +61,7 @@ export const loginUser = async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
 
   if (!user) {
-    return res.status(400).json({ success: false });
+    return res.status(401).json({ success: false });
   }
 
   const hashedPassword = crypto
@@ -70,7 +70,7 @@ export const loginUser = async (req, res) => {
     .digest('hex');
 
   if (user.password !== hashedPassword) {
-    return res.status(400).json({ success: false });
+    return res.status(401).json({ success: false });
   }
 
   const secretKey = crypto.createSecretKey(process.env.JWT_SECRET);
