@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: OMM Meme Generator Backend
   description: API Specification of the OMM Meme Generator Backend
-  version: '1.0.0'
+  version: 1.0.0
 servers:
   - url: http://localhost:3050
     description: Local Development Backend Server
@@ -329,6 +329,9 @@ paths:
         Get a list of memes.
 
 
+        ### Sorting
+
+
         Sorting by the following fields is supported:
 
 
@@ -341,14 +344,31 @@ paths:
         *   likeCount
             
 
+        You can add a sort field by adding a parameter in the form:
+        `sort[{field}]={asc|desc}` (see example request).
+
+
+        ### Filtering
+
+
+        #### Search
+
+
         Filtering for title, tags, captions can be done by providing one or more
-        strings to search for in the respective fields.
+        strings to search for in the respective fields. If you provide multiple
+        search strings (separated by whitespaces), one of the strings has to be
+        present in only one of the tags, captions (or the title) of the meme for
+        it to be returned. E.g., searching for "cat dog" in tags will return
+        memes that only have "cat", only "dog", or both tags.
 
 
         Filter by Template and Owner (user uploaded the meme) is done by
         providing a search string which is search in the name of the
         template/user. Only memes made from templates/ users whose name includes
         the search string are returned.
+
+
+        #### Numerical Filters
 
 
         Numerical filtering supported for:
@@ -373,7 +393,14 @@ paths:
         *   $gt: greater than
             
 
+        Filters are applied like so: `{field}[{$lt|$lte|$gte|$gt}]={value}`.
+
+
         See example for how to send the filters.
+
+
+        **Note**: Make sure to either use $lt, $lte, $gt, or $gte per field, and
+        not multiple ones at once!
       security:
         - noauthAuth: []
       parameters:
@@ -401,6 +428,96 @@ paths:
             type: string
           description: Sort by the view count.
           example: desc
+        - name: sort[commentCount]
+          in: query
+          schema:
+            type: string
+          description: Sort by the comment count.
+          example: asc
+        - name: sort[likeCount]
+          in: query
+          schema:
+            type: string
+          description: Sort by the like count.
+          example: asc
+        - name: createdAt[$gt]
+          in: query
+          schema:
+            type: string
+          description: Filter by the date of creation ($lt, $lte, $gte, $gt).
+          example: '2022-02-02 12:15:10'
+        - name: createdAt[$lt]
+          in: query
+          schema:
+            type: string
+          description: 'Example: filter "less than" createdAt.'
+        - name: commentCount[$gt]
+          in: query
+          schema:
+            type: integer
+          description: Filter by the comment count ($lt, $lte, $gte, $gt).
+          example: '4'
+        - name: commentCount[$lt]
+          in: query
+          schema:
+            type: string
+          description: 'Example: filter "less than" commentCount.'
+        - name: viewCount[$gt]
+          in: query
+          schema:
+            type: integer
+          description: Filter by the view count ($lt, $lte, $gte, $gt).
+          example: '10'
+        - name: viewCount[$lt]
+          in: query
+          schema:
+            type: string
+          description: 'Example: filter "less than" viewCount.'
+        - name: likeCount[$lt]
+          in: query
+          schema:
+            type: integer
+          description: 'Example: filter "less than" likeCount.'
+          example: '4'
+        - name: likeCount[$lt]
+          in: query
+          schema:
+            type: string
+          description: 'Example: filter "less than" likeCount.'
+        - name: title
+          in: query
+          schema:
+            type: string
+          description: Filter by any text in the title.
+          example: Funny Cat
+        - name: tags
+          in: query
+          schema:
+            type: string
+          description: Filter by tag, separate tags by whitespace.
+          example: cat
+        - name: captions
+          in: query
+          schema:
+            type: string
+          description: Filter by text in one of the captions.
+          example: I am a cat!
+        - name: owner
+          in: query
+          schema:
+            type: string
+          description: >-
+            Search for memes uploaded by a user whose name includes the search
+            string.
+          example: Maxi Maier
+        - name: template
+          in: query
+          schema:
+            type: string
+          description: >-
+            Search for memes that used a template whose name includes the search
+            string.
+          example: Cat Template
       responses:
         '200':
           description: Successful response

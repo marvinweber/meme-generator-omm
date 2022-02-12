@@ -124,22 +124,19 @@
 											"key": "tags",
 											"value": "[\"tag1\",\"tag2\"]",
 											"description": "Tags for the Meme (\"JSON stringified array\")",
-											"type": "text",
-											"disabled": true
+											"type": "text"
 										},
 										{
 											"key": "captions",
 											"value": "[\"some caption text\",\"another caption\"]",
 											"description": "Captions of the Meme (\"JSON stringified array\")",
-											"type": "text",
-											"disabled": true
+											"type": "text"
 										},
 										{
 											"key": "template",
 											"value": "",
 											"description": "ID of the template used (if known)",
-											"type": "text",
-											"disabled": true
+											"type": "text"
 										}
 									]
 								},
@@ -230,7 +227,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{apiUrl}}/memes/?p=1&perPage=10&sort[createdAt]=desc&sort[viewCount]=desc",
+									"raw": "{{apiUrl}}/memes/?p=1&perPage=10&sort[createdAt]=desc&sort[viewCount]=desc&sort[commentCount]=asc&sort[likeCount]=asc&createdAt[$gt]=2022-02-02 12:15:10&createdAt[$lt]&commentCount[$gt]=4&commentCount[$lt]&viewCount[$gt]=10&viewCount[$lt]&likeCount[$lt]=4&likeCount[$lt]&title=Funny Cat&tags=cat&captions=I am a cat!&owner=Maxi Maier&template=Cat Template",
 									"host": [
 										"{{apiUrl}}"
 									],
@@ -262,71 +259,81 @@
 										{
 											"key": "sort[commentCount]",
 											"value": "asc",
-											"description": "Sort by the comment count.",
-											"disabled": true
+											"description": "Sort by the comment count."
 										},
 										{
 											"key": "sort[likeCount]",
 											"value": "asc",
-											"description": "Sort by the like count.",
-											"disabled": true
-										},
-										{
-											"key": "commentCount[$lte]",
-											"value": "0",
-											"description": "Filter by the comment count ($lt, $lte, $gte, $gt).",
-											"disabled": true
-										},
-										{
-											"key": "viewCount[$gte]",
-											"value": "10",
-											"description": "Filter by the view count ($lt, $lte, $gte, $gt).",
-											"disabled": true
-										},
-										{
-											"key": "title",
-											"value": "Funny Cat",
-											"description": "Filter by any text in the title.",
-											"disabled": true
-										},
-										{
-											"key": "tags",
-											"value": "cat",
-											"description": "Filter by tag, separate tags by whitespace.",
-											"disabled": true
-										},
-										{
-											"key": "captions",
-											"value": "I am a cat!",
-											"description": "Filter by text in one of the captions.",
-											"disabled": true
+											"description": "Sort by the like count."
 										},
 										{
 											"key": "createdAt[$gt]",
 											"value": "2022-02-02 12:15:10",
-											"description": "Filter by the date of creation ($lt, $lte, $gte, $gt).",
-											"disabled": true
+											"description": "Filter by the date of creation ($lt, $lte, $gte, $gt)."
 										},
 										{
-											"key": "owner",
-											"value": "Maxi Maier",
-											"description": "Search for memes uploaded by a user whose name includes the search string.",
-											"disabled": true
+											"key": "createdAt[$lt]",
+											"value": null,
+											"description": "Example: filter \"less than\" createdAt."
 										},
 										{
-											"key": "template",
-											"value": "Cat Template",
-											"description": "Search for memes that used a template whose name includes the search string.",
-											"disabled": true
+											"key": "commentCount[$gt]",
+											"value": "4",
+											"description": "Filter by the comment count ($lt, $lte, $gte, $gt)."
+										},
+										{
+											"key": "commentCount[$lt]",
+											"value": null,
+											"description": "Example: filter \"less than\" commentCount."
+										},
+										{
+											"key": "viewCount[$gt]",
+											"value": "10",
+											"description": "Filter by the view count ($lt, $lte, $gte, $gt)."
+										},
+										{
+											"key": "viewCount[$lt]",
+											"value": null,
+											"description": "Example: filter \"less than\" viewCount."
 										},
 										{
 											"key": "likeCount[$lt]",
 											"value": "4",
-											"disabled": true
+											"description": "Filter by the like count ($lt, $lte, $gte, $gt)."
+										},
+										{
+											"key": "likeCount[$lt]",
+											"value": null,
+											"description": "Example: filter \"less than\" likeCount."
+										},
+										{
+											"key": "title",
+											"value": "Funny Cat",
+											"description": "Filter by any text in the title."
+										},
+										{
+											"key": "tags",
+											"value": "cat",
+											"description": "Filter by tag, separate tags by whitespace."
+										},
+										{
+											"key": "captions",
+											"value": "I am a cat!",
+											"description": "Filter by text in one of the captions."
+										},
+										{
+											"key": "owner",
+											"value": "Maxi Maier",
+											"description": "Search for memes uploaded by a user whose name includes the search string."
+										},
+										{
+											"key": "template",
+											"value": "Cat Template",
+											"description": "Search for memes that used a template whose name includes the search string."
 										}
 									]
 								},
-								"description": "Get a list of memes.\n\nSorting by the following fields is supported:\n\n*   createdAt\n*   viewCount\n*   commentCount\n*   likeCount\n    \n\nFiltering for title, tags, captions can be done by providing one or more strings to search for in the respective fields.\n\nFilter by Template and Owner (user uploaded the meme) is done by providing a search string which is search in the name of the template/user. Only memes made from templates/ users whose name includes the search string are returned.\n\nNumerical filtering supported for:\n\n*   viewCount\n*   likeCount\n*   commentCount\n    \n\nSupported operation for numerical filters (and the createdAt filter):\n\n*   $lt: lower than\n*   $tle: lower, or equal than\n*   $gte: greater, or equal than\n*   $gt: greater than\n    \n\nSee example for how to send the filters."
+								"description": "Get a list of memes.\n\n### Sorting\n\nSorting by the following fields is supported:\n\n*   createdAt\n*   viewCount\n*   commentCount\n*   likeCount\n    \n\nYou can add a sort field by adding a parameter in the form: `sort[{field}]={asc|desc}` (see example request).\n\n### Filtering\n\n#### Search\n\nFiltering for title, tags, captions can be done by providing one or more strings to search for in the respective fields. If you provide multiple search strings (separated by whitespaces), one of the strings has to be present in only one of the tags, captions (or the title) of the meme for it to be returned. E.g., searching for \"cat dog\" in tags will return memes that only have \"cat\", only \"dog\", or both tags.\n\nFilter by Template and Owner (user uploaded the meme) is done by providing a search string which is search in the name of the template/user. Only memes made from templates/ users whose name includes the search string are returned.\n\n#### Numerical Filters\n\nNumerical filtering supported for:\n\n*   viewCount\n*   likeCount\n*   commentCount\n    \n\nSupported operation for numerical filters (and the createdAt filter):\n\n*   $lt: lower than\n*   $tle: lower, or equal than\n*   $gte: greater, or equal than\n*   $gt: greater than\n    \n\nFilters are applied like so: `{field}[{$lt|$lte|$gte|$gt}]={value}`.\n\nSee example for how to send the filters.\n\n**Note**: Make sure to either use $lt, $lte, $gt, or $gte per field, and not multiple ones at once!"
 							},
 							"response": []
 						},
