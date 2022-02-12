@@ -13,10 +13,21 @@ npm start
 npm run watch:dev
 ```
 
+The Backend is served on port `3050`.
+
 ## Configuration
 Configuration is set via the `.env` file. Set proper values there and
 **restart the server**.  
 Configuration includes MongoDB access, secret for signing JWT Tokens, etc.
+
+The following configuration keys can be set:
+  - `PUBLIC_URL`: = The public URL of the Backend (is used, for example, for
+    generating Download URLs / links to Meme images, etc.).
+  - `GOOGLE_APP_CLIENT_ID`: Client ID of the Google OAuth application.
+  - `MONGODB_URI` URI to the MongoDB server/database.
+  - `JWT_SECRET`: Secret used to encrpyt / sign JWT Tokens.
+  - `JWT_ISSUER` Issuer name of the JWT Tokens created by the backend.
+
 
 ## MongoDB Connection
 Either start the Docker Services (`/tools/meme-generator-omm-docker`) and simply
@@ -33,7 +44,7 @@ getting started: https://mongoosejs.com/
 ## API (Endpoint) Documentation
 An OpenAPI specification file is used to serve a interactive API documentation
 page on: `http://localhost:3050/api-docs/`.  
-Currently, it is not created dynamically (from routes or so), but depends on the
+It is not created dynamically (from routes or so), but depends on the
 `openapi.yml` specification file, which has to be kept up-to-date.
 
 ## Docker
@@ -51,7 +62,6 @@ docker run --env-file .env -d -p 3050:3050 omm-meme-backend:latest
 ```
 Make sure to provide proper environment variables (see  `.env` file for required
 ones) while running the container. The `.env` file is not available in the
-container (image)! However, if you run the backend from the backend directory,
-docker will automatically use the `.env` file located there to expose the
-values set into the running container.
-
+container image!  
+Especially, a MongoDB server must be running "somewhere" and the URI in the
+`.env` file must be correct and working.

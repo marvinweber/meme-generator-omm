@@ -21,11 +21,16 @@ start, because of not available MongoDB connection.
 
 
 ## Start MongoDB + Apps (Frontend and Backend)
+**This is for quick Testing!**
+
 Make sure to adjust the `.env` file **in the frontend directory** and the
-`.backend.env` file **in this directory** with proper / desired values.
+`.backend.env` file **in this directory** with proper / desired values.  
+For a local dev/test setup, you can leave them as they are.
 ```shell
-# start docker services
-docker compose -f docker-compose.yml -f docker-compose.app.yml up -d
+# first start mongodb
+docker compose -f docker-compose.yml -f docker-compose.app.yml up -d mongodb
+# then start frontend and backend
+docker compose -f docker-compose.yml -f docker-compose.app.yml up -d omm_frontend omm_backend
 ```
 
 ## Single Services

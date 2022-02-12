@@ -2,15 +2,16 @@
 Project of the LMU Online Multimedia Course 2021/22.
 
 Stack:
-- Frontend: Typescript React SPA
-- Backend: Node.js & Express
+  - Frontend: Typescript React SPA
+  - Backend: Node.js & Express
 
 # Docs / Concepts
-For API Docs, see README.md of Backend.
+For API Docs, see README.md of Backend.  
+For Docs and Info about Frontend and Backend see their respective READMEs.
 
 ## Architecture
-The frontend is a react single page application and requires the backend to be
-up and running to work.
+The frontend is a React single page application and requires the backend to be
+up and running to work.  
 The backend stores memes, user data, templates, etc. and takes care of user
 token verification and authorization, etc.
 
@@ -37,7 +38,11 @@ https://developers.google.com/identity/sign-in/web/sign-in?hl=en
 - User uses the "Sign in with Google" in the Frontend.
 - The Frontend uses the id_token (returned by Google) to authenticate with the
   backend.
-- The backend creates a user in the database on first requests with a new google
-  token_id / Google user id.
+- The backend creates a user in the database on the first request with a new
+  Google user id. Subsequent usage of Googles id_tokens will not create a new
+  user, since the id of the user is stored in the database.
 - Backend routes can be secured by requiring authentication via the
   `requireAuthentication` middleware.
+
+Alternatively, when using the Registration and Login with E-Mail and Password,
+the Backend takes care of creating and signing JWT Tokens by itself.

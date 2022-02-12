@@ -36,6 +36,15 @@ Configuration (Backend API Endpoint, Google Client ID, etc.) is set via the
 `.env` file. Set proper values there and **restart the dev server** (or make
 a new production build).
 
+Available Configuration Keys:
+  - `REACT_APP_API_URL`: Endpoint of the Backend/ API.
+  - `REACT_APP_GOOGLE_OAUTH_CLIENT_ID`: Client ID of the Google OAuth
+    application.
+  - `REACT_APP_OVERVIEW_PER_PAGE`: Amount of images to load per page on the
+    meme overview (i.e., how many new memes to load if scrolled to the end of
+    the page).
+
+
 ### State Management
 [Redux](https://redux.js.org/tutorials/typescript-quick-start) (together
 with [React Redux](https://react-redux.js.org/introduction/getting-started)) is
