@@ -25,7 +25,7 @@ export const ROOT_DIR = dirname(fileURLToPath(import.meta.url));
 
 // load config into process.env
 dotenv.config({
-  path: path.normalize(path.join(ROOT_DIR, '..', 'config.env')),
+  path: path.normalize(path.join(ROOT_DIR, '..', '.env')),
 });
 
 const app = express();

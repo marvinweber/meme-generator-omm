@@ -3,10 +3,16 @@ Project of the LMU Online Multimedia Course 2021/22.
 
 Stack:
 - Frontend: Typescript React SPA
-- Backend: Express
+- Backend: Node.js & Express
 
 # Docs / Concepts
 For API Docs, see README.md of Backend.
+
+## Architecture
+The frontend is a react single page application and requires the backend to be
+up and running to work.
+The backend stores memes, user data, templates, etc. and takes care of user
+token verification and authorization, etc.
 
 ## Sign in with Google
 ### General

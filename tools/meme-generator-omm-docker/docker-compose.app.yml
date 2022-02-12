@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  omm_frontend:
+    build:
+      context: ../../frontend
+    ports:
+      - "3000:80"
+
+  omm_backend:
+    build: 
+      context: ../../backend
+    ports:
+      - "3050:3050"
+    env_file:
+      - .backend.env
