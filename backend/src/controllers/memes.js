@@ -8,6 +8,7 @@ import crypto from 'crypto';
 import fs from 'fs';
 import User from '../models/user.js';
 import escapeRegExChars from '../lib/regexEscaper.js';
+import ensureDir from '../lib/ensureDir.js';
 
 /** Field allowed to sort by. */
 const SORT_ALLOWED_FIELDS = [
@@ -364,6 +365,7 @@ export const createMemeByConfig = async (req, res) => {
 
     const memeImageData = meme.replace(/^data:image\/\w+;base64,/, '');
     const bf = Buffer.from(memeImageData, 'base64');
+    ensureDir(uploadPath);
     fs.writeFileSync(uploadPath, bf);
 
     const memeObj = await new Meme({

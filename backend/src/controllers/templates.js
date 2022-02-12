@@ -4,6 +4,7 @@ import https from 'https';
 import path from 'path';
 import Template from '../models/template.js';
 import { ROOT_DIR } from '../app.js';
+import ensureDir from '../lib/ensureDir.js';
 
 /** Index route to get a list of all available templates. */
 export const getTemplates = async (req, res, next) => {
@@ -80,6 +81,7 @@ export const createTemplateByImageUrl = async (req, res, next) => {
     downloadFilename
   );
   try {
+    ensureDir(downloadPath);
     await downloadImage(imgUrl, downloadPath);
   } catch (e) {
     console.error(e);
@@ -95,6 +97,7 @@ export const createTemplateByImageUrl = async (req, res, next) => {
   const targetPath = path.join(ROOT_DIR, 'public', downloadDir, targetFileName);
   const uploadPath = path.join(downloadDir, targetFileName);
 
+  ensureDir(targetPath);
   fs.renameSync(downloadPath, targetPath);
 
   const template = await new Template({
