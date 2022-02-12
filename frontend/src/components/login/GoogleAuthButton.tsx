@@ -23,13 +23,15 @@ const GoogleAuthButton: React.FC<{ text?: string }> = ({ text }) => {
   const responseGoogleSuccess = async (response: GoogleLoginResponse) => {
     const idToken = response.tokenObj.id_token;
 
-    // set axios default values and make login request to backend
-    apiClient.defaults.headers.common["Authorization"] = `Bearer ${idToken}`;
-    const loginResult = await apiClient.get("/auth/me");
+    // verify successfull authentication on the backend
+    const loginResult = await apiClient.get("/auth/me", {
+      headers: { Authorization: `Bearer ${idToken}` },
+    });
     if (loginResult.data.success) {
       dispatch(
         login({
           _id: loginResult.data.user._id,
+          loginType: "GOOGLE_OAUTH",
           email: response.profileObj.email,
           name: response.profileObj.name,
           imageUrl: response.profileObj.imageUrl,
@@ -47,9 +49,6 @@ const GoogleAuthButton: React.FC<{ text?: string }> = ({ text }) => {
   /** Google OAuth Logout */
   const logoutHandler = () => {
     dispatch(logout());
-
-    apiClient.defaults.headers.common["Authentication-Type"] = false;
-    apiClient.defaults.headers.common["Authentication-Token"] = false;
   };
 
   return (

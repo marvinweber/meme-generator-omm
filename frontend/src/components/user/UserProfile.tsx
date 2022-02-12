@@ -8,6 +8,7 @@ import UserTemplates from "./UserTemplates";
 
 export default function UserProfile() {
   const user = useAppSelector((state) => state.user.user);
+  const loginType = useAppSelector((state) => state.user.loginType);
   const apiDocsUrl = `${process.env.REACT_APP_API_URL}/api-docs`;
 
   const copyTokenToClipboard = () => {
@@ -16,14 +17,34 @@ export default function UserProfile() {
     });
   };
 
+  /** Generate a Logout-Button depending on the type of login used. */
+  const getLogoutButton = (): JSX.Element => {
+    switch (loginType) {
+      case "GOOGLE_OAUTH":
+        // the Auth Button serves as Logout Button in case of logged-in user
+        return <GoogleAuthButton />;
+      case "OMM_EMAIL_PASSWORD":
+        // Reload is sufficient to logout (-> store is cleared = logout)
+        return (
+          <button
+            className="p-2 rounded-md border hover:bg-slate-700 hover:text-white"
+            onClick={() => document.location = '/'}
+          >
+            Logout
+          </button>
+        );
+      default:
+        return <p>Something is wrong, you cannot be logged out!</p>;
+    }
+  };
+
   return (
     <div className="flex flex-col">
       <div className="flex justify-between">
         <div>
           <h2 className="text-xl">Hello {user.name}</h2>
-          <p>{user.email}</p>
-          {/* Logout Button */}
-          <GoogleAuthButton />
+          <p className="my-2">{user.email}</p>
+          {getLogoutButton()}
         </div>
         <img
           className="w-24 h-24 rounded-xl"
@@ -57,7 +78,7 @@ export default function UserProfile() {
             </h4>
             <p className="my-4">
               You can use your current valid JWT token (obtained via Google
-              OAuth) for authentification with the API.
+              OAuth or EMail/Password Login) for authentification with the API.
               <br />
               Note: you should not send this token to anyone, it is meant to be
               exclusivley used by you!

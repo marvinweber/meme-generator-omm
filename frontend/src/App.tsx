@@ -38,9 +38,19 @@ function App() {
               </NavLink>
             </>
           ) : (
-            <div className="ml-4">
-              <GoogleAuthButton text="Sign In" />
-            </div>
+            <>
+              <NavLink
+                className={({ isActive }) =>
+                  isActive ? "underline ml-4" : "hover:underline ml-4"
+                }
+                to="/login"
+              >
+                Login
+              </NavLink>
+              <div className="ml-4">
+                <GoogleAuthButton text="Sign In" />
+              </div>
+            </>
           )}
         </div>
       </div>

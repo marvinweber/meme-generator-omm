@@ -12,6 +12,7 @@ import SingleMeme from "./routes/singleMeme";
 import axios from "axios";
 import store from "./store/index";
 import { Provider } from "react-redux";
+import Login from "./routes/login";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -20,6 +21,7 @@ ReactDOM.render(
         <Routes>
           <Route path="/" element={<App />}>
             <Route index element={<Overview />} />
+            <Route path="login" element={<Login />} />
             <Route path="memes" element={<Overview />} />
             <Route path="memes/:memeId" element={<SingleMeme />} />
             <Route path="meme-editor" element={<MemeEditor />} />
